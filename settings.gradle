@@ -1,2 +1,2 @@
-include ':app'
+include ':app', ':myth-arch-mvvm-lib'
 rootProject.name='myth-arch-mvvm-android'
