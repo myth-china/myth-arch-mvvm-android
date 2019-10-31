@@ -25,12 +25,9 @@ interface MythView {
 
     fun getBaseBikeViewProvider(): MythViewProvider
 
-    fun getBaseActivity(): AppCompatActivity? {
-        return getBaseBikeViewProvider().activity
-    }
-
-    fun getBaseFragment(): Fragment? {
-        return getBaseBikeViewProvider().fragment
+    fun <T> getViewContainer(): T {
+        //activity and fragment only have one assigned value
+        return (getBaseBikeViewProvider().activity ?: getBaseBikeViewProvider().fragment) as T
     }
 
     fun getContext(): Context? {
