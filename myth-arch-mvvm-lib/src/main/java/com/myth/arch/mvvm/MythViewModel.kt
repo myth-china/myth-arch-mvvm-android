@@ -20,8 +20,7 @@ open class MythViewModel : ViewModel() {
         onStarted()
     }
 
-    open fun onStarted() {
-    }
+    open fun onStarted() = Unit
 
     override fun onCleared() {
         super.onCleared()

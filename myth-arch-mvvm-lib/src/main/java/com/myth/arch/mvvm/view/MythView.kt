@@ -39,15 +39,15 @@ interface MythView {
             setupExt(this, viewModel)
             arguments?.let {
                 viewModel.data.putAll(it)
-                viewModel.internalOnStarted()
             }
+            viewModel.internalOnStarted()
         }
         getBaseBikeViewProvider().activity?.apply {
             setupExt(this, viewModel)
             intent.extras?.let {
                 viewModel.data.putAll(it)
-                viewModel.internalOnStarted()
             }
+            viewModel.internalOnStarted()
         }
     }
 
