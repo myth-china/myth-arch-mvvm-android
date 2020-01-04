@@ -3,7 +3,7 @@ package com.myth.mama
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProviders
 import com.myth.arch.mvvm2.MythActivity
-import com.myth.arch.mvvm2.fire
+import com.myth.arch.mvvm2.ext.fire
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : MythActivity() {

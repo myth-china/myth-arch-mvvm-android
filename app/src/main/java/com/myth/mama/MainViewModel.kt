@@ -1,6 +1,8 @@
 package com.myth.mama
 
 import com.myth.arch.mvvm2.MythViewModel
+import com.myth.mama.viewmodelext.startActivity
+import com.myth.mama.viewmodelext.toast
 
 class MainViewModel : MythViewModel() {
 
