@@ -1,5 +1,6 @@
 package com.myth.mama
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProviders
 import com.myth.arch.mvvm2.MythActivity
@@ -15,7 +16,14 @@ class MainActivity : MythActivity() {
             ViewModelProviders.of(this).get(MainViewModel::class.java).fire(this)
 
         btn.setOnClickListener {
-            viewModel.openSecondPage()
+            viewModel.openSecondPageForResult()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 0x11 && resultCode == 0x11) {
+            btn.text = data?.getStringExtra("data")
         }
     }
 }
