@@ -7,10 +7,19 @@
     tools:context=".SecondActivity">
 
     <TextView
+        android:id="@+id/tv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="Second Activity"
         android:textSize="58sp" />
+
+    <Button
+        android:id="@+id/b_finish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="finish"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
