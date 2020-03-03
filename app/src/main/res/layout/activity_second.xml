@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#00ff00"
     tools:context=".SecondActivity">
 
     <TextView
@@ -18,8 +19,8 @@
         android:id="@+id/b_finish"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        android:text="finish"
         app:layout_constraintStart_toStartOf="parent"
-        android:text="finish"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

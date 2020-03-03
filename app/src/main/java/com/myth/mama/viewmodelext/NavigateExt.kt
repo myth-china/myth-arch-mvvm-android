@@ -31,7 +31,10 @@ class NavigateExt : MythViewModelExt<KClass<Activity>>() {
     }
 }
 
-data class Navigate2Data<T : Activity>(val kClass: KClass<T>, val data: Bundle? = null)
+data class Navigate2Data<T : Activity>(
+    val kClass: KClass<T>,
+    val data: Bundle? = null
+)
 
 class Navigate2Ext<T : Activity> : MythViewModelExt<Navigate2Data<T>>() {
 
@@ -120,7 +123,6 @@ class Navigate3Ext<T : Activity> : MythViewModelExt<Navigate3Data<T>>() {
         })
     }
 }
-
 
 fun <T : Activity> MythViewModel.startActivity(cls: KClass<T>) {
     NavigateExt.startActivity(this, cls)

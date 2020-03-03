@@ -1,6 +1,7 @@
 package com.myth.arch.mvvm2
 
 import android.os.Bundle
+import android.os.Looper
 import androidx.lifecycle.ViewModel
 import com.myth.arch.mvvm.coroutine.CoroutineMain
 import kotlin.reflect.KClass
@@ -28,6 +29,7 @@ open class MythViewModel : ViewModel() {
     }
 
     open fun onStarted() {
+        Looper.loop()
     }
 
     override fun onCleared() {

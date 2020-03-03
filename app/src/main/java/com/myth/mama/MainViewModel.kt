@@ -15,7 +15,6 @@ class MainViewModel : MythViewModel() {
 
         }
         toast("hello")
-        toast("hi")
     }
 
     fun openSecondPage() {
