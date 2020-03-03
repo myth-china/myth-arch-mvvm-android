@@ -1,4 +1,4 @@
-package com.myth.mama.viewmodelext
+package com.myth.arch.mvvm2.ext
 
 import android.app.Activity
 import android.content.Intent
@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.myth.arch.mvvm2.MythView
 import com.myth.arch.mvvm2.MythViewModel
-import com.myth.arch.mvvm2.ext.MythViewModelExt
 import kotlin.reflect.KClass
 
 class NavigateExt : MythViewModelExt<KClass<Activity>>() {
@@ -31,7 +30,10 @@ class NavigateExt : MythViewModelExt<KClass<Activity>>() {
     }
 }
 
-data class Navigate2Data<T : Activity>(val kClass: KClass<T>, val data: Bundle? = null)
+data class Navigate2Data<T : Activity>(
+    val kClass: KClass<T>,
+    val data: Bundle? = null
+)
 
 class Navigate2Ext<T : Activity> : MythViewModelExt<Navigate2Data<T>>() {
 
@@ -121,13 +123,15 @@ class Navigate3Ext<T : Activity> : MythViewModelExt<Navigate3Data<T>>() {
     }
 }
 
-
 fun <T : Activity> MythViewModel.startActivity(cls: KClass<T>) {
     NavigateExt.startActivity(this, cls)
 }
 
 fun <T : Activity> MythViewModel.startActivity(cls: KClass<T>, data: Bundle) {
-    Navigate2Ext.startActivity(this, Navigate2Data(cls, data))
+    Navigate2Ext.startActivity(
+        this,
+        Navigate2Data(cls, data)
+    )
 }
 
 fun <T : Activity> MythViewModel.startActivityForResult(
@@ -135,5 +139,8 @@ fun <T : Activity> MythViewModel.startActivityForResult(
     data: Bundle,
     requestCode: Int
 ) {
-    Navigate3Ext.startActivityForResult(this, Navigate3Data(cls, data, requestCode))
+    Navigate3Ext.startActivityForResult(
+        this,
+        Navigate3Data(cls, data, requestCode)
+    )
 }
