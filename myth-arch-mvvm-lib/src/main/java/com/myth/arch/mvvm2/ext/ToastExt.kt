@@ -24,3 +24,7 @@ class ToastExt : MythViewModelExt<String>() {
         })
     }
 }
+
+fun MythViewModel.toast(text: String) {
+    ToastExt.toast(this, text)
+}

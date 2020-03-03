@@ -3,9 +3,9 @@ package com.myth.mama
 import android.app.Application
 import com.myth.arch.mvvm2.MythViewModel
 import com.myth.arch.mvvm2.ext.ToastExt
-import com.myth.mama.viewmodelext.Navigate2Ext
-import com.myth.mama.viewmodelext.Navigate3Ext
-import com.myth.mama.viewmodelext.NavigateExt
+import com.myth.arch.mvvm2.ext.Navigate2Ext
+import com.myth.arch.mvvm2.ext.Navigate3Ext
+import com.myth.arch.mvvm2.ext.NavigateExt
 
 class App : Application() {
 
