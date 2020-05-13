@@ -8,17 +8,14 @@ import com.myth.arch.mvvm2.MythViewModel
 class UseActivityExt : MythViewModelExt<(Activity) -> Unit>() {
 
     companion object {
-        const val useActivityBlock = "UseActivity"
+        const val useActivity = "UseActivity"
 
         fun useActivity(viewModel: MythViewModel, block: (Activity) -> Unit) {
-            @Suppress("UNCHECKED_CAST")
-            val scaffold =
-                viewModel.extMap[useActivityBlock] as? MythViewModelExt<(Activity) -> Unit>
-            scaffold?.getData()?.postValue(block)
+            viewModel.getExt<UseActivityExt>(useActivity).getData().postValue(block)
         }
     }
 
-    override fun setup(view: MythView) {
+    override fun internalSetup(view: MythView) {
         getData().observe(view.getLifeCycleOwner(), Observer {
             it ?: return@Observer
             view.getContext2() ?: return@Observer
@@ -28,7 +25,6 @@ class UseActivityExt : MythViewModelExt<(Activity) -> Unit>() {
         })
     }
 }
-
 
 fun MythViewModel.useActivity(block: (Activity) -> Unit) {
     UseActivityExt.useActivity(this, block)

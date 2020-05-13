@@ -5,23 +5,25 @@ import androidx.lifecycle.Observer
 import com.myth.arch.mvvm2.MythView
 import com.myth.arch.mvvm2.MythViewModel
 
-class ToastExt : MythViewModelExt<String>() {
+class ToastExt : LazyMythViewModelExt<String>() {
 
     companion object {
         const val toast = "toast"
 
         fun toast(viewModel: MythViewModel, text: String) {
-            @Suppress("UNCHECKED_CAST")
-            val scaffold = viewModel.extMap[toast] as? MythViewModelExt<String>
-            scaffold?.getData()?.postValue(text)
+            val ext: ToastExt = viewModel.lazyGetExt(toast)
+            ext.getData().postValue(text)
         }
     }
 
-    override fun setup(view: MythView) {
+    var hasConfig = false
+
+    override fun internalSetup(view: MythView) {
         getData().observe(view.getLifeCycleOwner(), Observer {
             it ?: return@Observer
             Toast.makeText(view.getContext2(), it, Toast.LENGTH_SHORT).show()
         })
+        hasConfig = true
     }
 }
 

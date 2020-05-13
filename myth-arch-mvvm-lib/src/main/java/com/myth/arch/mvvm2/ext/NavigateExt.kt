@@ -16,12 +16,12 @@ class NavigateExt : MythViewModelExt<KClass<Activity>>() {
 
         fun <T : Activity> startActivity(viewModel: MythViewModel, clazz: KClass<T>) {
             @Suppress("UNCHECKED_CAST") val scaffold =
-                viewModel.extMap[navigate] as? MythViewModelExt<KClass<T>>
+                viewModel.extInstanceMap[navigate] as? MythViewModelExt<KClass<T>>
             scaffold?.getData()?.postValue(clazz)
         }
     }
 
-    override fun setup(view: MythView) {
+    override fun internalSetup(view: MythView) {
         getData().observe(view.getLifeCycleOwner(), Observer {
             it ?: return@Observer
             val ctx = view.getContext2()
@@ -42,12 +42,12 @@ class Navigate2Ext<T : Activity> : MythViewModelExt<Navigate2Data<T>>() {
 
         fun <T : Activity> startActivity(viewModel: MythViewModel, data: Navigate2Data<T>) {
             @Suppress("UNCHECKED_CAST") val scaffold =
-                viewModel.extMap[navigate2] as? MythViewModelExt<Navigate2Data<T>>
+                viewModel.extInstanceMap[navigate2] as? MythViewModelExt<Navigate2Data<T>>
             scaffold?.getData()?.postValue(data)
         }
     }
 
-    override fun setup(view: MythView) {
+    override fun internalSetup(view: MythView) {
         getData().observe(view.getLifeCycleOwner(), Observer {
             it ?: return@Observer
 
@@ -89,12 +89,12 @@ class Navigate3Ext<T : Activity> : MythViewModelExt<Navigate3Data<T>>() {
             data: Navigate3Data<T>
         ) {
             @Suppress("UNCHECKED_CAST")
-            val scaffold = viewModel.extMap[navigate3] as? MythViewModelExt<Navigate3Data<T>>
+            val scaffold = viewModel.extInstanceMap[navigate3] as? MythViewModelExt<Navigate3Data<T>>
             scaffold?.getData()?.postValue(data)
         }
     }
 
-    override fun setup(view: MythView) {
+    override fun internalSetup(view: MythView) {
         getData().observe(view.getLifeCycleOwner(), Observer {
             it ?: return@Observer
 
