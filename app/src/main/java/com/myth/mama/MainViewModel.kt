@@ -11,7 +11,7 @@ class MainViewModel : MythViewModel() {
     override fun onStarted() {
         super.onStarted()
         println("on started")
-        data.getString("shadiao")?.let {
+        data.getString("Big Boss")?.let {
 
         }
         toast("hello")
