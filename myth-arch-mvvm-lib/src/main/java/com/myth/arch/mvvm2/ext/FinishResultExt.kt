@@ -14,14 +14,11 @@ class FinishResultExt : MythViewModelExt<Event2<Int?, Bundle?>>() {
         const val finishResult = "finishResult"
 
         fun finishResult(viewModel: MythViewModel, data: Event2<Int?, Bundle?>) {
-            @Suppress("UNCHECKED_CAST")
-            val scaffold =
-                viewModel.extMap[finishResult] as? MythViewModelExt<Event2<Int?, Bundle?>>
-            scaffold?.getData()?.postValue(data)
+            viewModel.getExt<FinishResultExt>(finishResult).getData().postValue(data)
         }
     }
 
-    override fun setup(view: MythView) {
+    override fun internalSetup(view: MythView) {
         getData().observe(
             view.getLifeCycleOwner(),
             EventObserver2<Int?, Bundle?> { resultCode, data ->

@@ -12,12 +12,12 @@ class FinishExt : MythViewModelExt<Boolean>() {
 
         fun finish(viewModel: MythViewModel, block: Boolean) {
             @Suppress("UNCHECKED_CAST")
-            val scaffold = viewModel.extMap[finish] as? MythViewModelExt<Boolean>
+            val scaffold = viewModel.extInstanceMap[finish] as? MythViewModelExt<Boolean>
             scaffold?.getData()?.postValue(block)
         }
     }
 
-    override fun setup(view: MythView) {
+    override fun internalSetup(view: MythView) {
         getData().observe(view.getLifeCycleOwner(), Observer {
             if (it == null || !it) {
                 return@Observer
