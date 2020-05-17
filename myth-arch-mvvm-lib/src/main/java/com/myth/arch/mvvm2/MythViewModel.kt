@@ -15,6 +15,7 @@ import kotlin.reflect.full.createInstance
 open class MythViewModel : ViewModel() {
 
     companion object {
+        //扩展组件注册类
         var extClsMap = HashMap<String, KClass<out MythViewModelExt<*>>>()
 
         fun putExtScaffold(name: String, extScaffold: KClass<out MythViewModelExt<*>>) {
@@ -22,6 +23,9 @@ open class MythViewModel : ViewModel() {
         }
     }
 
+    /**
+     * 扩展组件实例
+     */
     val extInstanceMap = HashMap<String, Any?>()
 
     /**
@@ -31,8 +35,9 @@ open class MythViewModel : ViewModel() {
      */
     val lazyExtInstanceData = MutableLiveData<LazyMythViewModelExt<*>>()
 
-    var data = Bundle()
-    private val cm = CoroutineMain()
+    val data by lazy { Bundle() }
+    private val cmLazy = lazy { CoroutineMain() }
+    private val cm by cmLazy
 
     init {
         extClsMap.forEach { (t, u) ->
@@ -51,7 +56,9 @@ open class MythViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        cm.destroy()
+        if (cmLazy.isInitialized()) {
+            cm.destroy()
+        }
     }
 
     /**

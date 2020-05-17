@@ -3,7 +3,6 @@ package com.myth.arch.mvvm2
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -25,7 +24,7 @@ interface MythView {
                 viewModelOf(this, cls)
             }
             else -> {
-                throw MythIllegalArgumentException("The class must extend AppCompatActivity or Fragment.")
+                throw getSubClassErrorException()
             }
         }
     }
@@ -54,19 +53,19 @@ interface MythView {
         if (this is AppCompatActivity) {
             lifecycleOwner = this
             this.intent.extras?.let {
-                viewModel?.data = it
+                viewModel?.data?.putAll(it)
             }
         }
 
         if (this is Fragment) {
             lifecycleOwner = this.viewLifecycleOwner
             this.arguments?.let {
-                viewModel?.data = it
+                viewModel?.data?.putAll(it)
             }
         }
 
         if (lifecycleOwner == null) {
-            throw MythIllegalArgumentException("The class must extend AppCompatActivity or Fragment.")
+            throw getSubClassErrorException()
         }
 
         viewModel?.onStarted()
@@ -82,9 +81,23 @@ interface MythView {
         })
     }
 
-    fun getContext2(): Context?
+    fun getLifeCycleOwner(): LifecycleOwner {
+        return when (this) {
+            is AppCompatActivity -> this
+            is Fragment -> this.getLifeCycleOwner()
+            else -> throw getSubClassErrorException()
+        }
+    }
 
-    fun getFragmentManager2(): FragmentManager?
+    fun getContext2(): Context? {
+        return when (this) {
+            is AppCompatActivity -> this
+            is Fragment -> this.context
+            else -> throw getSubClassErrorException()
+        }
+    }
 
-    fun getLifeCycleOwner(): LifecycleOwner
+    fun getSubClassErrorException(): MythIllegalArgumentException {
+        return MythIllegalArgumentException("The class must extend AppCompatActivity or Fragment.")
+    }
 }

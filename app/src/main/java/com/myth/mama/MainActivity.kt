@@ -2,11 +2,12 @@ package com.myth.mama
 
 import android.content.Intent
 import android.os.Bundle
-import com.myth.arch.mvvm2.MythActivity
+import androidx.appcompat.app.AppCompatActivity
+import com.myth.arch.mvvm2.MythView
 import com.myth.arch.mvvm2.ext.toast
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : MythActivity() {
+class MainActivity : AppCompatActivity(), MythView {
     private val viewModel by lazy { viewModelOf(MainViewModel::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
