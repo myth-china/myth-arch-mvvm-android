@@ -1,2 +1,2 @@
 # myth-arch-mvvm-android
- A very lightweight Android-mvvm-architecture template.
+ A very lightweight android MVVM architecture template.
