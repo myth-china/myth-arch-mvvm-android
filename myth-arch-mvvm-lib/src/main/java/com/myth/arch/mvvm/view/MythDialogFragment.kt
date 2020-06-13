@@ -17,8 +17,8 @@ open class MythDialogFragment : DialogFragment(), MythView {
     override fun onStart() {
         super.onStart()
         val dialogWidth = resources.displayMetrics.widthPixels
-        dialog.window?.setLayout(dialogWidth, ViewGroup.LayoutParams.MATCH_PARENT)
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog?.window?.setLayout(dialogWidth, ViewGroup.LayoutParams.MATCH_PARENT)
+        dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
     override fun getBaseBikeViewProvider(): MythViewProvider {
