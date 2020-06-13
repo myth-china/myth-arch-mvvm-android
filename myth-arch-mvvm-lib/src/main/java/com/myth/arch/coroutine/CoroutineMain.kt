@@ -1,4 +1,4 @@
-package com.myth.arch.mvvm.coroutine
+package com.myth.arch.coroutine
 
 import android.util.Log
 import androidx.lifecycle.Lifecycle

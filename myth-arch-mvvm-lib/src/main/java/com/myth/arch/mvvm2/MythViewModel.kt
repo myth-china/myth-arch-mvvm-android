@@ -3,7 +3,7 @@ package com.myth.arch.mvvm2
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.myth.arch.mvvm.coroutine.CoroutineMain
+import com.myth.arch.coroutine.CoroutineMain
 import com.myth.arch.mvvm2.exception.MythIllegalStateException
 import com.myth.arch.mvvm2.ext.LazyMythViewModelExt
 import com.myth.arch.mvvm2.ext.MythViewModelExt

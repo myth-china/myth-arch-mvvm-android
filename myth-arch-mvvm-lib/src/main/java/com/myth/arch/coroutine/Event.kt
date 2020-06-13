@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.myth.arch.mvvm.coroutine
+package com.myth.arch.coroutine
 
 import androidx.lifecycle.Observer
 
