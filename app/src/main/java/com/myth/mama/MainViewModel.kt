@@ -1,31 +1,26 @@
 package com.myth.mama
 
 import android.os.Bundle
-import com.myth.arch.mvvm2.MythViewModel
-import com.myth.arch.mvvm2.ext.startActivity
-import com.myth.arch.mvvm2.ext.startActivityForResult
-import com.myth.arch.mvvm2.ext.toast
+import com.myth.mama.base.BaseViewModel
+import com.myth.mama.base.startActivity
+import com.myth.mama.base.startActivityForResult
+import com.myth.mama.base.toast
 
-class MainViewModel : MythViewModel() {
+class MainViewModel : BaseViewModel() {
 
-    override fun onStarted() {
-        super.onStarted()
-        println("on started")
-        data.getString("Big Boss")?.let {
-
-        }
+    init {
         toast("hello")
     }
 
     fun openSecondPage() {
-        startActivity(SecondActivity::class, Bundle().apply {
+        startActivity(SecondActivity::class.java, Bundle().apply {
             putString("data", "from main page")
         })
     }
 
     fun openSecondPageForResult() {
         startActivityForResult(
-            SecondActivity::class,
+            SecondActivity::class.java,
             Bundle().apply {
                 putString("data", "from main page")
             },

@@ -3,11 +3,13 @@ package com.myth.arch.mvvm2
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.myth.arch.mvvm2.exception.MythIllegalArgumentException
-import com.myth.arch.mvvm2.ext.MythViewModelExt
+import com.myth.arch.mvvm3.MythViewModel
 
 /**
  * 所有Activity及Fragment的父类
@@ -15,7 +17,7 @@ import com.myth.arch.mvvm2.ext.MythViewModelExt
 interface MythView {
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : MythViewModel> viewModelOf(cls: Class<T>): T {
+    fun <T : ViewModel> viewModelOf(cls: Class<T>): T {
         return when (this) {
             is Fragment -> {
                 viewModelOf(this, cls)
@@ -32,8 +34,8 @@ interface MythView {
     /**
      * 用于共享ViewModel实例的情况
      */
-    fun <T : MythViewModel> viewModelOf(fragment: Fragment, cls: Class<T>): T {
-        val viewModel = ViewModelProviders.of(fragment).get(cls)
+    fun <T : ViewModel> viewModelOf(fragment: Fragment, cls: Class<T>): T {
+        val viewModel = ViewModelProvider(fragment).get(cls)
         fire(viewModel)
         return viewModel
     }
@@ -41,44 +43,46 @@ interface MythView {
     /**
      * 用于共享ViewModel实例的情况
      */
-    fun <T : MythViewModel> viewModelOf(activity: AppCompatActivity, cls: Class<T>): T {
-        val viewModel = ViewModelProviders.of(activity).get(cls)
+    fun <T : ViewModel> viewModelOf(activity: AppCompatActivity, cls: Class<T>): T {
+        val viewModel = ViewModelProvider(activity).get(cls)
         fire(viewModel)
         return viewModel
     }
 
-    fun fire(viewModel: MythViewModel?) {
+    fun fire(viewModel: ViewModel?) {
         var lifecycleOwner: LifecycleOwner? = null
 
-        if (this is AppCompatActivity) {
-            lifecycleOwner = this
-            this.intent.extras?.let {
-                viewModel?.data?.putAll(it)
+        if (viewModel is MythViewModel) {
+            if (this is AppCompatActivity) {
+                lifecycleOwner = this
+                this.intent.extras?.let {
+                    viewModel.getData().putAll(it)
+                }
             }
-        }
 
-        if (this is Fragment) {
-            lifecycleOwner = this.viewLifecycleOwner
-            this.arguments?.let {
-                viewModel?.data?.putAll(it)
+            if (this is Fragment) {
+                lifecycleOwner = this.viewLifecycleOwner
+                this.arguments?.let {
+                    viewModel.getData().putAll(it)
+                }
             }
+
+            if (lifecycleOwner == null) {
+                throw getSubClassErrorException()
+            }
+
+            viewModel
+                .getProvider()
+                .configData
+                .observe(
+                    lifecycleOwner,
+                    Observer {
+                        viewModel.getProvider().config(this)
+                    }
+                )
+        } else {
+            throw IllegalStateException("MythView only can use with mythViewModel")
         }
-
-        if (lifecycleOwner == null) {
-            throw getSubClassErrorException()
-        }
-
-        viewModel?.onStarted()
-
-        viewModel?.extInstanceMap?.keys?.forEach { k ->
-            @Suppress("UNCHECKED_CAST") val scaffold =
-                viewModel.extInstanceMap[k] as? MythViewModelExt<Any>
-            scaffold?.setup(this@MythView)
-        }
-
-        viewModel?.lazyExtInstanceData?.observe(lifecycleOwner, Observer {
-            it.setup(this)
-        })
     }
 
     fun getLifeCycleOwner(): LifecycleOwner {
@@ -91,8 +95,16 @@ interface MythView {
 
     fun getContext2(): Context? {
         return when (this) {
-            is AppCompatActivity -> this
+            is FragmentActivity -> this
             is Fragment -> this.context
+            else -> throw getSubClassErrorException()
+        }
+    }
+
+    fun getActivity2(): FragmentActivity? {
+        return when (this) {
+            is AppCompatActivity -> this
+            is Fragment -> this.activity
             else -> throw getSubClassErrorException()
         }
     }
