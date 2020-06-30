@@ -26,7 +26,7 @@ interface MythView {
                 viewModelOf(this, cls)
             }
             else -> {
-                throw getSubClassErrorException()
+                throw subClassErrorException()
             }
         }
     }
@@ -68,20 +68,19 @@ interface MythView {
             }
 
             if (lifecycleOwner == null) {
-                throw getSubClassErrorException()
+                throw subClassErrorException()
             }
 
-            viewModel
-                .getProvider()
-                .configData
-                .observe(
-                    lifecycleOwner,
-                    Observer {
-                        viewModel.getProvider().config(this)
-                    }
-                )
+            viewModel.getProvider().config(this)
+            viewModel.getProvider().configData.observe(
+                lifecycleOwner,
+                Observer {
+                    viewModel.getProvider().config(this)
+                }
+            )
+            lifecycleOwner.lifecycle.addObserver(viewModel.getProvider().coroutineMain)
         } else {
-            throw IllegalStateException("MythView only can use with mythViewModel")
+            throw IllegalStateException("MythView only can use with MythViewModel")
         }
     }
 
@@ -89,7 +88,7 @@ interface MythView {
         return when (this) {
             is AppCompatActivity -> this
             is Fragment -> this.getLifeCycleOwner()
-            else -> throw getSubClassErrorException()
+            else -> throw subClassErrorException()
         }
     }
 
@@ -97,7 +96,7 @@ interface MythView {
         return when (this) {
             is FragmentActivity -> this
             is Fragment -> this.context
-            else -> throw getSubClassErrorException()
+            else -> throw subClassErrorException()
         }
     }
 
@@ -105,11 +104,18 @@ interface MythView {
         return when (this) {
             is AppCompatActivity -> this
             is Fragment -> this.activity
-            else -> throw getSubClassErrorException()
+            else -> throw subClassErrorException()
         }
     }
 
-    fun getSubClassErrorException(): MythIllegalArgumentException {
-        return MythIllegalArgumentException("The class must extend AppCompatActivity or Fragment.")
+    fun getFragment2(): Fragment {
+        return when (this) {
+            is Fragment -> this
+            else -> throw java.lang.IllegalStateException("Root view is not a fragment!")
+        }
+    }
+
+    fun subClassErrorException(): MythIllegalArgumentException {
+        return MythIllegalArgumentException("The class must extend AppCompatActivity or Fragment!")
     }
 }

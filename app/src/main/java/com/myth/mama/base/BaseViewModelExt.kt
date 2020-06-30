@@ -8,11 +8,56 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.myth.arch.mvvm3.MythViewModel
 
-fun BaseViewModel.toast(text: String) {
+/**
+ * Use Block
+ */
+internal  fun BaseViewModel.useFragment(callback:(Fragment) ->Unit) {
+    val name = "useFragment"
+
+    val toastData = provider.getViewModelExtData(name) ?: MutableLiveData<(Fragment)->Unit>()
+
+    toastData.value = callback
+
+    if (toastData.hasObservers()) {
+        return
+    }
+
+    provider.addViewModelExt(name, toastData) { view, data ->
+        data.observe(view.getLifeCycleOwner(), Observer {
+            callback(view.getFragment2())
+        })
+    }
+}
+
+internal  fun BaseViewModel.useActivity(callback:(AppCompatActivity) ->Unit) {
+    val name = "useActivity"
+
+    val toastData = provider.getViewModelExtData(name) ?: MutableLiveData<(AppCompatActivity)->Unit>()
+
+    toastData.value = callback
+
+    if (toastData.hasObservers()) {
+        return
+    }
+
+    provider.addViewModelExt(name, toastData) { view, data ->
+        data.observe(view.getLifeCycleOwner(), Observer {
+            view.getActivity2()?.let {
+                callback(it as AppCompatActivity)
+            }
+        })
+    }
+}
+
+/**
+ * Toast
+ */
+internal fun BaseViewModel.toast(text: String) {
     val name = "toast"
 
-    val toastData = provider.getExtData(name) ?: MutableLiveData<String>()
+    val toastData = provider.getViewModelExtData(name) ?: MutableLiveData<String>()
 
     toastData.postValue(text)
 
@@ -20,7 +65,7 @@ fun BaseViewModel.toast(text: String) {
         return
     }
 
-    provider.addExt(name, toastData) { view, data ->
+    provider.addViewModelExt(name, toastData) { view, data ->
         data.observe(view.getLifeCycleOwner(), Observer {
             val context = view.getContext2() ?: return@Observer
             Toast.makeText(context, it, Toast.LENGTH_LONG).show()
@@ -28,10 +73,13 @@ fun BaseViewModel.toast(text: String) {
     }
 }
 
-fun BaseViewModel.startActivity(cls: Class<out AppCompatActivity>, args: Bundle? = null) {
+/**
+ * Navigator
+ */
+internal fun BaseViewModel.startActivity(cls: Class<out AppCompatActivity>, args: Bundle? = null) {
     val name = "navigator"
 
-    val liveData = provider.getExtData(name) ?: MutableLiveData<Class<out AppCompatActivity>>()
+    val liveData = provider.getViewModelExtData(name) ?: MutableLiveData<Class<out AppCompatActivity>>()
 
     liveData.postValue(cls)
 
@@ -39,7 +87,7 @@ fun BaseViewModel.startActivity(cls: Class<out AppCompatActivity>, args: Bundle?
         return
     }
 
-    provider.addExt(name, liveData) { view, data ->
+    provider.addViewModelExt(name, liveData) { view, data ->
         data.observe(view.getLifeCycleOwner(), Observer {
             val context = view.getContext2() ?: return@Observer
             context.startActivity(Intent(context, it).apply {
@@ -51,14 +99,14 @@ fun BaseViewModel.startActivity(cls: Class<out AppCompatActivity>, args: Bundle?
     }
 }
 
-fun BaseViewModel.startActivityForResult(
+internal fun BaseViewModel.startActivityForResult(
     cls: Class<out AppCompatActivity>,
     args: Bundle? = null,
     requestCode: Int
 ) {
     val name = "navigatorForResult"
 
-    val liveData = provider.getExtData(name) ?: MutableLiveData<Class<out AppCompatActivity>>()
+    val liveData = provider.getViewModelExtData(name) ?: MutableLiveData<Class<out AppCompatActivity>>()
 
     liveData.postValue(cls)
 
@@ -66,7 +114,7 @@ fun BaseViewModel.startActivityForResult(
         return
     }
 
-    provider.addExt(name, liveData) { view, data ->
+    provider.addViewModelExt(name, liveData) { view, data ->
         data.observe(view.getLifeCycleOwner(), Observer {
             when (view) {
                 is FragmentActivity -> {
@@ -82,6 +130,59 @@ fun BaseViewModel.startActivityForResult(
                             putExtras(args)
                         }
                     }, requestCode)
+                }
+                else -> {
+                    throw IllegalStateException("Can't startActivityForResult, the view is not a FragmentActivity or Fragment!")
+                }
+            }
+        })
+    }
+}
+
+internal fun MythViewModel.finish(){
+    val name = "finish"
+
+    val liveData = getProvider().getViewModelExtData(name) ?: MutableLiveData<Boolean>()
+
+    if (liveData.hasObservers()) {
+        return
+    }
+
+    getProvider().addViewModelExt(name, liveData) { view, data ->
+        data.observe(view.getLifeCycleOwner(), Observer {
+            when (view) {
+                is FragmentActivity -> {
+                    view.finish()
+                }
+                is Fragment -> {
+                    view.activity?.finish()
+                }
+                else -> {
+                    throw IllegalStateException("Can't startActivityForResult, the view is not a FragmentActivity or Fragment!")
+                }
+            }
+        })
+    }
+}
+
+
+internal fun MythViewModel.popBackStack(){
+    val name = "popBackStack"
+
+    val liveData = getProvider().getViewModelExtData(name) ?: MutableLiveData<Boolean>()
+
+    if (liveData.hasObservers()) {
+        return
+    }
+
+    getProvider().addViewModelExt(name, liveData) { view, data ->
+        data.observe(view.getLifeCycleOwner(), Observer {
+            when (view) {
+                is FragmentActivity -> {
+                    view.supportFragmentManager.popBackStack()
+                }
+                is Fragment -> {
+                    view.parentFragmentManager.popBackStack()
                 }
                 else -> {
                     throw IllegalStateException("Can't startActivityForResult, the view is not a FragmentActivity or Fragment!")

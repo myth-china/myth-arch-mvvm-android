@@ -2,6 +2,7 @@ package com.myth.arch.mvvm3
 
 import android.os.Bundle
 import com.myth.arch.mvvm2.MythView
+import kotlinx.coroutines.CoroutineScope
 
 interface MythViewModel {
 
@@ -11,5 +12,13 @@ interface MythViewModel {
 
     fun getData(): Bundle {
         return getProvider().data
+    }
+
+    fun launch(func: suspend CoroutineScope.() -> Unit) {
+        getProvider().launch(func)
+    }
+
+     fun launchBackground(func: suspend CoroutineScope.() -> Unit) {
+        getProvider().launchBackground(func)
     }
 }
