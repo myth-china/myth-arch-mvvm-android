@@ -9,14 +9,15 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.myth.arch.mvvm3.MythViewModel
+import com.myth.mama.performance.TimePerformance
 
 /**
  * Use Block
  */
-internal  fun BaseViewModel.useFragment(callback:(Fragment) ->Unit) {
+internal fun BaseViewModel.useFragment(callback: (Fragment) -> Unit) {
     val name = "useFragment"
 
-    val toastData = provider.getViewModelExtData(name) ?: MutableLiveData<(Fragment)->Unit>()
+    val toastData = provider.getViewModelExtData(name) ?: MutableLiveData<(Fragment) -> Unit>()
 
     toastData.value = callback
 
@@ -31,10 +32,11 @@ internal  fun BaseViewModel.useFragment(callback:(Fragment) ->Unit) {
     }
 }
 
-internal  fun BaseViewModel.useActivity(callback:(AppCompatActivity) ->Unit) {
+internal fun BaseViewModel.useActivity(callback: (AppCompatActivity) -> Unit) {
     val name = "useActivity"
 
-    val toastData = provider.getViewModelExtData(name) ?: MutableLiveData<(AppCompatActivity)->Unit>()
+    val toastData =
+        provider.getViewModelExtData(name) ?: MutableLiveData<(AppCompatActivity) -> Unit>()
 
     toastData.value = callback
 
@@ -57,6 +59,9 @@ internal  fun BaseViewModel.useActivity(callback:(AppCompatActivity) ->Unit) {
 internal fun BaseViewModel.toast(text: String) {
     val name = "toast"
 
+    val timeRecorder = TimePerformance.getTimeRecorder(name)
+    timeRecorder.start()
+
     val toastData = provider.getViewModelExtData(name) ?: MutableLiveData<String>()
 
     toastData.postValue(text)
@@ -71,6 +76,8 @@ internal fun BaseViewModel.toast(text: String) {
             Toast.makeText(context, it, Toast.LENGTH_LONG).show()
         })
     }
+
+    timeRecorder.print()
 }
 
 /**
@@ -79,7 +86,8 @@ internal fun BaseViewModel.toast(text: String) {
 internal fun BaseViewModel.startActivity(cls: Class<out AppCompatActivity>, args: Bundle? = null) {
     val name = "navigator"
 
-    val liveData = provider.getViewModelExtData(name) ?: MutableLiveData<Class<out AppCompatActivity>>()
+    val liveData =
+        provider.getViewModelExtData(name) ?: MutableLiveData<Class<out AppCompatActivity>>()
 
     liveData.postValue(cls)
 
@@ -106,7 +114,12 @@ internal fun BaseViewModel.startActivityForResult(
 ) {
     val name = "navigatorForResult"
 
-    val liveData = provider.getViewModelExtData(name) ?: MutableLiveData<Class<out AppCompatActivity>>()
+
+    val timeRecorder = TimePerformance.getTimeRecorder(name)
+    timeRecorder.start()
+
+    val liveData =
+        provider.getViewModelExtData(name) ?: MutableLiveData<Class<out AppCompatActivity>>()
 
     liveData.postValue(cls)
 
@@ -137,9 +150,11 @@ internal fun BaseViewModel.startActivityForResult(
             }
         })
     }
+
+    timeRecorder.print()
 }
 
-internal fun MythViewModel.finish(){
+internal fun MythViewModel.finish() {
     val name = "finish"
 
     val liveData = getProvider().getViewModelExtData(name) ?: MutableLiveData<Boolean>()
@@ -166,7 +181,7 @@ internal fun MythViewModel.finish(){
 }
 
 
-internal fun MythViewModel.popBackStack(){
+internal fun MythViewModel.popBackStack() {
     val name = "popBackStack"
 
     val liveData = getProvider().getViewModelExtData(name) ?: MutableLiveData<Boolean>()
