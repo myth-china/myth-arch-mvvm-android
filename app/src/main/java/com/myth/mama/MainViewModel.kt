@@ -1,10 +1,10 @@
 package com.myth.mama
 
 import android.os.Bundle
+import com.myth.arch.mvvm3.startActivity
+import com.myth.arch.mvvm3.startActivityForResult
+import com.myth.arch.mvvm3.toast
 import com.myth.mama.base.BaseViewModel
-import com.myth.mama.base.startActivity
-import com.myth.mama.base.startActivityForResult
-import com.myth.mama.base.toast
 
 class MainViewModel : BaseViewModel() {
 

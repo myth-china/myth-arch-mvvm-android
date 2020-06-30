@@ -6,9 +6,9 @@ import com.myth.arch.mvvm3.MythViewModelProvider
 
 open class BaseViewModel : ViewModel(), MythViewModel {
 
-    internal val provider by lazy { MythViewModelProvider(this) }
+    private val mythViewModelProvider by lazy { MythViewModelProvider(this) }
 
     override fun getProvider(): MythViewModelProvider {
-        return provider
+        return mythViewModelProvider
     }
 }
