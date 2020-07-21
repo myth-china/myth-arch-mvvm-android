@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.myth.arch.exception.MythIllegalStateException
 
 /**
  * Use Block
@@ -134,7 +135,7 @@ fun MythViewModel.startActivityForResult(
                     }, requestCode)
                 }
                 else -> {
-                    throw IllegalStateException("Can't startActivityForResult, the view is not a FragmentActivity or Fragment!")
+                    throw MythIllegalStateException("Can't startActivityForResult, the view is not a FragmentActivity or Fragment!")
                 }
             }
         })
@@ -160,7 +161,7 @@ fun MythViewModel.finish() {
                     view.activity?.finish()
                 }
                 else -> {
-                    throw IllegalStateException("Can't startActivityForResult, the view is not a FragmentActivity or Fragment!")
+                    throw MythIllegalStateException("Can't startActivityForResult, the view is not a FragmentActivity or Fragment!")
                 }
             }
         })

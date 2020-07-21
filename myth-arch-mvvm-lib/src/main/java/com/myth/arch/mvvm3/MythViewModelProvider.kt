@@ -40,10 +40,6 @@ class MythViewModelProvider(private val viewModel: MythViewModel) {
         extMap[data] = observe as MythViewModelExt<*>
         dataMap[name] = data
         configAgain()
-
-        launch {
-
-        }
     }
 
     @Suppress("UNCHECKED_CAST")
