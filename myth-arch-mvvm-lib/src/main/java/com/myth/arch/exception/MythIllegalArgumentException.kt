@@ -1,4 +1,4 @@
-package com.myth.arch.mvvm2.exception
+package com.myth.arch.exception
 
 class MythIllegalArgumentException(msg: String) :
     IllegalArgumentException("${MythExceptionConst.prefix} $msg")

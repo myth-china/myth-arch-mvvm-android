@@ -8,6 +8,12 @@ import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 class CoroutineMain : CoroutineScope, LifecycleObserver {
+
+    companion object {
+        //自动捕获协程中抛出的异常
+        var autoCatch = false
+    }
+
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.i("CoroutineMain", throwable.message ?: "Unknown Error")
         //throw throwable
@@ -16,7 +22,11 @@ class CoroutineMain : CoroutineScope, LifecycleObserver {
     private val job = SupervisorJob()
 
     override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job + exceptionHandler
+        get() = if (autoCatch) {
+            Dispatchers.Main + job + exceptionHandler
+        } else {
+            Dispatchers.Main + job
+        }
 
     fun cancelChildren() = coroutineContext.cancelChildren()
 

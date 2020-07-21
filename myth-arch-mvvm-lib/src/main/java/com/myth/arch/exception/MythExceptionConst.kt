@@ -1,4 +1,4 @@
-package com.myth.arch.mvvm2.exception
+package com.myth.arch.exception
 
 object MythExceptionConst {
     const val prefix = "Myth -> "

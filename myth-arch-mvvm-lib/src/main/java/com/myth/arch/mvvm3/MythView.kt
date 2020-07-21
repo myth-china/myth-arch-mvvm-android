@@ -1,4 +1,4 @@
-package com.myth.arch.mvvm2
+package com.myth.arch.mvvm3
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
@@ -8,8 +8,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.myth.arch.mvvm2.exception.MythIllegalArgumentException
-import com.myth.arch.mvvm3.MythViewModel
+import com.myth.arch.exception.MythIllegalArgumentException
 
 /**
  * 所有Activity及Fragment的父类

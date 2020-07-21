@@ -1,7 +1,6 @@
 package com.myth.arch.mvvm3
 
 import android.os.Bundle
-import com.myth.arch.mvvm2.MythView
 import kotlinx.coroutines.CoroutineScope
 
 interface MythViewModel {

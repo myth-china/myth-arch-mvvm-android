@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.myth.arch.coroutine.CoroutineMain
 import com.myth.arch.event.Event
-import com.myth.arch.mvvm2.MythView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
