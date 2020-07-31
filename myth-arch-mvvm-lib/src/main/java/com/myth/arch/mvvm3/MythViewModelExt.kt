@@ -16,6 +16,11 @@ import com.myth.arch.exception.MythIllegalStateException
 fun MythViewModel.useFragment(callback: (Fragment) -> Unit) {
     val name = "useFragment"
 
+    /**
+     * 从MythViewModel的MythViewModelProvider实例中获取我们的LiveData，如果此LiveData不存在，则new一个，
+     * 之后会通过MythViewModelProvider.addViewModelExt(name, toastData)，将此LiveData注册到MythViewModelProvider实例中，
+     * 这样我们就可以通过此LiveData发送指令给View，实现我们的逻辑
+     */
     val toastData = getProvider().getViewModelExtData(name) ?: MutableLiveData<(Fragment) -> Unit>()
 
     toastData.value = callback
@@ -24,6 +29,9 @@ fun MythViewModel.useFragment(callback: (Fragment) -> Unit) {
         return
     }
 
+    /**
+     * 注册我们的LiveData和View建立关系
+     */
     getProvider().addViewModelExt(name, toastData) { view, data ->
         data.observe(view.getLifeCycleOwner(), Observer {
             callback(view.getFragment2())

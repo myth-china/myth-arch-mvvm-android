@@ -1,0 +1,39 @@
+/**
+ * Src debug config class
+ */
+class Module {
+    boolean src = false//open src debug
+    String name//project name
+    String path//project path
+    String group//group
+    String artifact//artifact
+
+    Module(boolean src = false,
+           String name,
+           String path,
+           String group,
+           String artifact) {
+        this.src = src
+        this.name = name
+        this.path = path
+        this.group = group
+        this.artifact = artifact
+    }
+}
+
+def global = [:]
+global.src = false
+ext.global = global
+
+ext.modules = [
+        new Module(false,
+                "airrouter",
+                "./airrouter",
+                "com.github.myth-china",
+                "airrouter"),
+        new Module(false,
+                "airrouter-processor",
+                "./airrouter-processor",
+                "com.github.myth-china",
+                "airrouter-processor")
+]
