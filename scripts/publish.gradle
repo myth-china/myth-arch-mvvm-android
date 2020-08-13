@@ -3,6 +3,12 @@ apply plugin: 'signing'
 
 File localPropFile = project.rootProject.file('local.properties')
 
+ext["signing.keyId"] = ''
+ext["signing.password"] = ''
+ext["signing.secretKeyRingFile"] = ''
+ext["ossrhUsername"] = ''
+ext["ossrhPassword"] = ''
+
 if (localPropFile.exists()) {
     println "Found secret props file, loading props"
     Properties p = new Properties()
