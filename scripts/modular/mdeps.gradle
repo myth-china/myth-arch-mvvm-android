@@ -1,0 +1,6 @@
+def local = [:]
+
+local.airrouter = "com.github.myth-china:airrouter:0.0.1-SNAPSHOT"
+local.airrouter_processor = "com.github.myth-china:airrouter-processor:0.0.1-SNAPSHOT"
+
+ext.mdeps = local

@@ -1,0 +1,38 @@
+/**
+ * Src debug script
+ */
+
+static def configSettings(settings) {
+    settings.apply from: "${settings.rootDir}/scripts/modular/modules.gradle"
+
+    settings.modules.each {
+        if (settings.global.src || it.src) {
+            println "--------------------------------"
+            println "src debug :${it.name}"
+            def projectName = ":${it.name}"
+            settings.include projectName
+            settings.project(projectName).projectDir = new File(it.path)
+        }
+    }
+}
+
+static def configSubstitute(project) {
+    project.apply from: "${project.rootDir}/scripts/modular/modules.gradle"
+
+    project.configurations.all {
+        resolutionStrategy {
+            dependencySubstitution { ds ->
+                project.modules.each { m ->
+                    if (project.global.src || m.src) {
+                        def dependency = "${m.group}:${m.artifact}"
+                        def projectName = ":$m.name"
+                        ds.substitute module(dependency) with ds.project(projectName)
+                    }
+                }
+            }
+        }
+    }
+}
+
+ext.configSettings = this.&configSettings
+ext.configSubstitute = this.&configSubstitute
