@@ -11,21 +11,24 @@ myth-arch-mvvm-android
 为什么要用myth-arch-mvvm-android?
 -
 
-* 提升开发效率
+提升开发效率
+----
 
 通过核心设计思路，提供了在ViewModel中直接操作View及上下文的API，避免多次使用LiveData来实现简单的View操作
 
-* 提高代码质量
+提高代码质量
+----
 
 ViewModel扩展方式的核心设计思路中，利用Lifecycle+LiveData+Coroutine的方式解决了同步/异步操作View及上下文的生命周期问题
 
-* 提高基础能力扩展性
+提高基础能力扩展性
+----
 
 使用Kotlin的扩展方法来为ViewModel增加新的能力，防止Base类膨胀，也可以通过文件的形式对扩展进行分类，同时作者为你在扩展方法中提供安全的View及上下文供你直接使用，并且无需担心生命周期问题
 
 现有MythViewModel中的扩展API
 -
-```
+```kotlin
 class MainViewModel : ViewModel(), MythViewModel {
 
     private val mythViewModelProvider by lazy { MythViewModelProvider(this) }
@@ -100,7 +103,13 @@ class MainViewModel : ViewModel(), MythViewModel {
 如何添加myth-arch-mvvm-android依赖？
 -
 
+```groovy
 
+dependencies {
+    implementation 'com.github.myth-china:myth-arch-mvvm-lib:1.0.0'
+}
+
+```
 
 myth-arch-mvvm-android的使用步骤是什么？
 -
@@ -113,7 +122,7 @@ Activity或者Fragment继承MythView
 -
 如果要通过Activit或者Fragment使用此库，则需要Activity或者Fragment实现MythView接口，接口中的方法全部是缺省方法，所以您不必实现任何方法，继承此接口即可：
 
-```
+```kotlin
 class MainActivity : AppCompatActivity(), MythView {
     private val viewModel by lazy { viewModelOf(MainViewModel::class.java) }
 
@@ -169,7 +178,7 @@ MythViewModel能力扩展有哪些优点？
 -
 下面是作者实现的扩展，您可以参考并实现自己的扩展功能
 
-```
+```kotlin
 /**
  * Use Block
  */
