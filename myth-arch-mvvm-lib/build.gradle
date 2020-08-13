@@ -3,12 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 ext {
-    PUBLISH_GROUP_ID = "com.github.myth-china"
-    PUBLISH_ARTIFACT_ID = "myth-arch-mvvm-lib"
-    PUBLISH_VERSION = "0.0.1-SNAPSHOT"
+    GROUP = "com.github.myth-china"
+    ARTIFACT_ID = "myth-arch-mvvm-lib"
+    VERSION_NAME = "1.0.0"
 }
 
-apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
+apply from: "${rootProject.projectDir}/scripts/publish.gradle"
 
 android {
     compileSdkVersion 29
@@ -29,7 +29,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
 }
 
 dependencies {
@@ -42,8 +41,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.72"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7'
 
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.3.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.core:core-ktx:1.3.1'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
     implementation 'com.google.code.gson:gson:2.8.6'

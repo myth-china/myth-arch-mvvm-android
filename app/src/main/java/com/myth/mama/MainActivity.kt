@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.myth.arch.mvvm3.MythView
-import com.myth.arch.mvvm3.toast
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), MythView {
@@ -15,13 +14,13 @@ class MainActivity : AppCompatActivity(), MythView {
         setContentView(R.layout.activity_main)
 
         btn.setOnClickListener {
-            viewModel.openSecondPageForResult()
+            viewModel.remoteStartActivityForResult()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.toast("OnResumed toast with ext")
+        viewModel.remoteToast("OnResumed toast with ext")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

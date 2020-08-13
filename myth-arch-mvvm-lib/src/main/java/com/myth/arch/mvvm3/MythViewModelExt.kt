@@ -53,6 +53,10 @@ fun MythViewModel.useActivity(callback: (AppCompatActivity) -> Unit) {
 
     getProvider().addViewModelExt(name, toastData) { view, data ->
         data.observe(view.getLifeCycleOwner(), Observer {
+            //如果ViewModel绑定的是Fragment，那么不回调Activity代码块
+            if (view is Fragment) {
+                return@Observer
+            }
             view.getActivity2()?.let {
                 callback(it as AppCompatActivity)
             }

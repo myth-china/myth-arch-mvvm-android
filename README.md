@@ -8,6 +8,107 @@ myth-arch-mvvm-android
 * 自动化的生命周期管理方式（基于JetPack的Lifecycle及Kotlin的Coroutine）
 * 避免了Activity及Fragment生命周期引起的内存及空指针问题（基于JetPack的Lifecycle）
 
+为什么要用myth-arch-mvvm-android?
+-
+
+* 提升开发效率
+
+通过核心设计思路，提供了在ViewModel中直接操作View及上下文的API，避免多次使用LiveData来实现简单的View操作
+
+* 提高代码质量
+
+ViewModel扩展方式的核心设计思路中，利用Lifecycle+LiveData+Coroutine的方式解决了同步/异步操作View及上下文的生命周期问题
+
+* 提高基础能力扩展性
+
+使用Kotlin的扩展方法来为ViewModel增加新的能力，防止Base类膨胀，也可以通过文件的形式对扩展进行分类，同时作者为你在扩展方法中提供安全的View及上下文供你直接使用，并且无需担心生命周期问题
+
+现有MythViewModel中的扩展API
+-
+```
+class MainViewModel : ViewModel(), MythViewModel {
+
+    private val mythViewModelProvider by lazy { MythViewModelProvider(this) }
+
+    override fun getProvider(): MythViewModelProvider {
+        return mythViewModelProvider
+    }
+
+    /**
+     * 在ViewModel中使用实Fragment实例
+     */
+    fun remoteUseFragment() {
+        useFragment {
+            //此处是ViewModel绑定的Fragment实例，若绑定的不是Fragment，此代码块不会被调用
+        }
+    }
+
+    /**
+     * 在ViewModel中使用Activity实例
+     */
+    fun remoteUseActivity() {
+        useActivity {
+            //此处是ViewModel绑定的Activity实例，若绑定的不是Activity，此代码块不会被调用
+        }
+    }
+
+    /**
+     * 在ViewModel中显示一个toast提示
+     */
+    fun remoteToast(text:String) {
+        toast(text)
+    }
+
+    /**
+     * 在ViewModel中启动新的Activity
+     */
+    fun remoteStartActivity() {
+        startActivity(SecondActivity::class.java, Bundle().apply {
+            putString("data", "from main page")
+        })
+    }
+
+    /**
+     * 在ViewModel中启动新的Activity，并获取结果
+     */
+    fun remoteStartActivityForResult() {
+        startActivityForResult(
+            SecondActivity::class.java,
+            Bundle().apply {
+                putString("data", "from main page")
+            },
+            0x11
+        )
+    }
+
+    /**
+     * 在ViewModel中调用Activity的finish()
+     */
+    fun remoteFinish() {
+        finish()
+    }
+
+    /**
+     * 在ViewModel中调用Fragment的popBackStack()
+     */
+    fun remotePopBackStack() {
+        popBackStack()
+    }
+}
+```
+
+如何添加myth-arch-mvvm-android依赖？
+-
+
+
+
+myth-arch-mvvm-android的使用步骤是什么？
+-
+
+1. 让你的Activity或者Fragment实现MythView接口
+2. 让你的ViewModel实现MythViewModel接口
+3. 尽情使用
+
 Activity或者Fragment继承MythView
 -
 如果要通过Activit或者Fragment使用此库，则需要Activity或者Fragment实现MythView接口，接口中的方法全部是缺省方法，所以您不必实现任何方法，继承此接口即可：
