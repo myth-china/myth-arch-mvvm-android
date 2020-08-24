@@ -10,10 +10,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.myth.arch.exception.MythIllegalArgumentException
 
+object MythViewProvider : MythProvider()
+
 /**
  * 所有Activity及Fragment的父类
  */
 interface MythView {
+
+    fun getProvider(): MythViewProvider {
+        return MythViewProvider
+    }
+
+    fun <T> putObj(name: String, obj: T) {
+        getProvider().putObj(hashCode(), name, obj)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T> getObj(name: String): T {
+        return getProvider().getObj(hashCode(), name)
+    }
 
     @Suppress("UNCHECKED_CAST")
     fun <T : ViewModel> viewModelOf(cls: Class<T>): T {
@@ -70,14 +85,15 @@ interface MythView {
                 throw subClassErrorException()
             }
 
-            viewModel.getProvider().config(this)
-            viewModel.getProvider().configData.observe(
+            viewModel.init()
+
+            viewModel.config(this)
+            viewModel.getConfigData().observe(
                 lifecycleOwner,
                 Observer {
-                    viewModel.getProvider().config(this)
+                    viewModel.config(this)
                 }
             )
-            lifecycleOwner.lifecycle.addObserver(viewModel.getProvider().coroutineMain)
         } else {
             throw IllegalStateException("MythView only can use with MythViewModel")
         }

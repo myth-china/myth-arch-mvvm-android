@@ -1,10 +1,12 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+
+    apply from: 'scripts/modular/mdeps.gradle'
+
     repositories {
         google()
         jcenter()
-
     }
 
     dependencies {
@@ -16,6 +18,10 @@ buildscript {
 }
 
 allprojects {
+
+    apply from: "${project.rootDir}/scripts/modular/modular.gradle"
+    configSubstitute(it)
+
     repositories {
         google()
         jcenter()

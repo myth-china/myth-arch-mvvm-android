@@ -1,2 +1,5 @@
+apply from: "./scripts/modular/modular.gradle"
+configSettings(this)
+
 include ':app', ':myth-arch-mvvm-lib'
 rootProject.name='myth-arch-mvvm-android'

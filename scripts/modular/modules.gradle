@@ -22,18 +22,13 @@ class Module {
 }
 
 def global = [:]
-global.src = false
+global.src = true
 ext.global = global
 
 ext.modules = [
         new Module(false,
-                "airrouter",
-                "./airrouter",
+                "myth-arch-mvvm-lib",
+                "./myth-arch-mvvm-lib",
                 "com.github.myth-china",
-                "airrouter"),
-        new Module(false,
-                "airrouter-processor",
-                "./airrouter-processor",
-                "com.github.myth-china",
-                "airrouter-processor")
+                "myth-arch-mvvm-lib")
 ]
