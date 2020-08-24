@@ -6,12 +6,6 @@ import com.myth.arch.mvvm3.*
 
 class MainViewModel : ViewModel(), MythViewModel {
 
-    private val mythViewModelProvider by lazy { MythViewModelProvider(this) }
-
-    override fun getProvider(): MythViewModelProvider {
-        return mythViewModelProvider
-    }
-
     /**
      * 在ViewModel中使用实Fragment实例
      */
@@ -33,7 +27,7 @@ class MainViewModel : ViewModel(), MythViewModel {
     /**
      * 在ViewModel中显示一个toast提示
      */
-    fun remoteToast(text:String) {
+    fun remoteToast(text: String) {
         toast(text)
     }
 
