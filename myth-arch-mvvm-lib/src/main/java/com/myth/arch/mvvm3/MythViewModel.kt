@@ -8,6 +8,13 @@ import com.myth.arch.event.Event
 object MythViewModelProvider : MythProvider() {
 
     internal fun initObj(hashCode: Int) {
+
+        //非首次初始化，仅做计数器+1动作
+        if (!counterIncrease(hashCode)) {
+            return
+        }
+
+        putObj(hashCode, "counter", 1)
         putObj(hashCode, "data", Bundle())
         putObj(hashCode, "extMap", HashMap<LiveData<*>, MythViewModelExt<*>>())
         putObj(hashCode, "dataMap", HashMap<String, LiveData<*>>())
@@ -37,8 +44,12 @@ interface MythViewModel {
         return MythViewModelProvider
     }
 
-    fun init() {
+    fun initProvider() {
         getProvider().initObj(hashCode())
+    }
+
+    fun destroyProvider() {
+        getProvider().counterDecrease(hashCode())
     }
 
     fun getData(): Bundle {

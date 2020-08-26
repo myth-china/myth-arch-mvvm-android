@@ -4,10 +4,7 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import com.myth.arch.exception.MythIllegalArgumentException
 
 object MythViewProvider : MythProvider()
@@ -85,8 +82,7 @@ interface MythView {
                 throw subClassErrorException()
             }
 
-            viewModel.init()
-
+            viewModel.initProvider()
             viewModel.config(this)
             viewModel.getConfigData().observe(
                 lifecycleOwner,
@@ -94,6 +90,17 @@ interface MythView {
                     viewModel.config(this)
                 }
             )
+
+            lifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
+
+                /**
+                 * 释放ViewModel中的Provider资源
+                 */
+                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+                fun onDestroy() {
+                    viewModel.destroyProvider()
+                }
+            })
         } else {
             throw IllegalStateException("MythView only can use with MythViewModel")
         }
