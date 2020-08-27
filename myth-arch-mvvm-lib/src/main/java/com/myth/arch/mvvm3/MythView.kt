@@ -64,6 +64,8 @@ interface MythView {
         var lifecycleOwner: LifecycleOwner? = null
 
         if (viewModel is MythViewModel) {
+            viewModel.initProvider()
+
             if (this is AppCompatActivity) {
                 lifecycleOwner = this
                 this.intent.extras?.let {
@@ -82,7 +84,6 @@ interface MythView {
                 throw subClassErrorException()
             }
 
-            viewModel.initProvider()
             viewModel.config(this)
             viewModel.getConfigData().observe(
                 lifecycleOwner,
