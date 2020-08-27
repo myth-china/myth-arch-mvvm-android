@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.myth.arch.event.Event
+import java.lang.IllegalStateException
 
 object MythViewModelProvider : MythProvider() {
 
@@ -21,7 +22,7 @@ object MythViewModelProvider : MythProvider() {
         putObj(hashCode, "configData", MutableLiveData<Event<Boolean>>())
     }
 
-    internal fun getData(hashCode: Int): Bundle {
+    internal fun getData(hashCode: Int): Bundle? {
         return getObj(hashCode, "data")
     }
 
@@ -54,6 +55,7 @@ interface MythViewModel {
 
     fun getData(): Bundle {
         return getProvider().getData(hashCode())
+            ?: throw IllegalStateException("Do not use getData() in constructor, because it is a lifecycle method.")
     }
 
     fun getConfigData(): MutableLiveData<Event<Boolean>> {
