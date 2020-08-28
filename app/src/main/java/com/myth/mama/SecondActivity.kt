@@ -15,7 +15,7 @@ class SecondActivity : AppCompatActivity() {
 
         b_finish.setOnClickListener {
             setResult(0x11, Intent().apply {
-                putExtra("data", "back from second page")
+                putExtra("data", "Activity Result")
             })
             finish()
         }

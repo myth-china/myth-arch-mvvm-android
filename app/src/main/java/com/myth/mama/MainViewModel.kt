@@ -1,8 +1,10 @@
 package com.myth.mama
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
-import com.myth.arch.mvvm3.*
+import com.myth.arch.mvvm3.MythViewModel
+import com.myth.arch.mvvm3.vmext.*
 
 class MainViewModel : ViewModel(), MythViewModel {
 
@@ -12,6 +14,7 @@ class MainViewModel : ViewModel(), MythViewModel {
     fun remoteUseFragment() {
         useFragment {
             //此处是ViewModel绑定的Fragment实例，若绑定的不是Fragment，此代码块不会被调用
+            Toast.makeText(it.context, "Toast in useFragment Block", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -21,6 +24,7 @@ class MainViewModel : ViewModel(), MythViewModel {
     fun remoteUseActivity() {
         useActivity {
             //此处是ViewModel绑定的Activity实例，若绑定的不是Activity，此代码块不会被调用
+            Toast.makeText(it, "Toast in useActivity Block", Toast.LENGTH_LONG).show()
         }
     }
 

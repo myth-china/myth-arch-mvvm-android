@@ -8,34 +8,34 @@ import java.lang.IllegalStateException
 
 object MythViewModelProvider : MythProvider() {
 
-    internal fun initObj(hashCode: Int) {
+    internal fun initMemberVar(hashCode: Int) {
 
         //非首次初始化，仅做计数器+1动作
         if (!counterIncrease(hashCode)) {
             return
         }
 
-        putObj(hashCode, "counter", 1)
-        putObj(hashCode, "data", Bundle())
-        putObj(hashCode, "extMap", HashMap<LiveData<*>, MythViewModelExt<*>>())
-        putObj(hashCode, "dataMap", HashMap<String, LiveData<*>>())
-        putObj(hashCode, "configData", MutableLiveData<Event<Boolean>>())
+        putMemberVar(hashCode, "counter", 1)
+        putMemberVar(hashCode, "data", Bundle())
+        putMemberVar(hashCode, "extMap", HashMap<LiveData<*>, MythViewModelExt<*>>())
+        putMemberVar(hashCode, "dataMap", HashMap<String, LiveData<*>>())
+        putMemberVar(hashCode, "configData", MutableLiveData<Event<Boolean>>())
     }
 
     internal fun getData(hashCode: Int): Bundle? {
-        return getObj(hashCode, "data")
+        return getMemberVar(hashCode, "data")
     }
 
     internal fun getExtMap(hashCode: Int): HashMap<LiveData<*>, MythViewModelExt<*>> {
-        return getObj(hashCode, "extMap")
+        return getMemberVar(hashCode, "extMap")
     }
 
     internal fun getDataMap(hashCode: Int): HashMap<String, LiveData<*>> {
-        return getObj(hashCode, "dataMap")
+        return getMemberVar(hashCode, "dataMap")
     }
 
     internal fun getConfigData(hashCode: Int): MutableLiveData<Event<Boolean>> {
-        return getObj(hashCode, "configData")
+        return getMemberVar(hashCode, "configData")
     }
 }
 
@@ -45,8 +45,23 @@ interface MythViewModel {
         return MythViewModelProvider
     }
 
+    /**
+     * Dynamic bind an member object with this viewModel
+     */
+    fun <T> putMemberVar(name: String, obj: T) {
+        getProvider().putMemberVar(hashCode(), name, obj)
+    }
+
+    /**
+     * Get the bind  member object with this viewModel
+     */
+    @Suppress("UNCHECKED_CAST")
+    fun <T> getMemberVar(name: String): T {
+        return getProvider().getMemberVar(hashCode(), name)
+    }
+
     fun initProvider() {
-        getProvider().initObj(hashCode())
+        getProvider().initMemberVar(hashCode())
     }
 
     fun destroyProvider() {

@@ -18,13 +18,19 @@ interface MythView {
         return MythViewProvider
     }
 
-    fun <T> putObj(name: String, obj: T) {
-        getProvider().putObj(hashCode(), name, obj)
+    /**
+     * Dynamic bind an member object with this View
+     */
+    fun <T> pubMemberVar(name: String, obj: T) {
+        getProvider().putMemberVar(hashCode(), name, obj)
     }
 
+    /**
+     * Get the bind  member object with this View
+     */
     @Suppress("UNCHECKED_CAST")
-    fun <T> getObj(name: String): T {
-        return getProvider().getObj(hashCode(), name)
+    fun <T> getMemberVar(name: String): T {
+        return getProvider().getMemberVar(hashCode(), name)
     }
 
     @Suppress("UNCHECKED_CAST")
