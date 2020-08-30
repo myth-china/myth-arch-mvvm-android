@@ -34,16 +34,18 @@ interface MythView {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : ViewModel> viewModelOf(cls: Class<T>): T {
-        return when (this) {
-            is Fragment -> {
-                viewModelOf(this, cls)
-            }
-            is AppCompatActivity -> {
-                viewModelOf(this, cls)
-            }
-            else -> {
-                throw subClassErrorException()
+    fun <T : ViewModel> viewModelOf(cls: Class<T>): Lazy<T> {
+        return lazy {
+            when (this) {
+                is Fragment -> {
+                    viewModelOf(this, cls)
+                }
+                is AppCompatActivity -> {
+                    viewModelOf(this, cls)
+                }
+                else -> {
+                    throw subClassErrorException()
+                }
             }
         }
     }
@@ -90,6 +92,8 @@ interface MythView {
                 throw subClassErrorException()
             }
 
+            viewModel.onFired(viewModel.getData())
+
             viewModel.config(this)
             viewModel.getConfigData().observe(
                 lifecycleOwner,
@@ -116,7 +120,7 @@ interface MythView {
     fun getLifeCycleOwner(): LifecycleOwner {
         return when (this) {
             is AppCompatActivity -> this
-            is Fragment -> this.getLifeCycleOwner()
+            is Fragment -> this.viewLifecycleOwner
             else -> throw subClassErrorException()
         }
     }

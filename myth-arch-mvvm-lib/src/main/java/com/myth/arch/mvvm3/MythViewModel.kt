@@ -41,6 +41,11 @@ object MythViewModelProvider : MythProvider() {
 
 interface MythViewModel {
 
+    /**
+     * After [MythView.viewModelOf] is called.
+     */
+    fun onFired(data: Bundle)
+
     fun getProvider(): MythViewModelProvider {
         return MythViewModelProvider
     }
