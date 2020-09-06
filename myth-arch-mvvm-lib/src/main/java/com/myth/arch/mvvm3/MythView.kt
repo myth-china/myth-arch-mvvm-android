@@ -18,6 +18,10 @@ interface MythView {
         return MythViewProvider
     }
 
+    fun hasMemberVar(name: String): Boolean {
+        return getProvider().hasMemberVar(hashCode(), name)
+    }
+
     /**
      * Dynamic bind an member object with this View
      */

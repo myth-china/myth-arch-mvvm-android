@@ -21,7 +21,7 @@ fun MythViewModel.showLoading(show: Boolean) {
 
     addViewModelExt(name, loadingData) { view, data ->
         data.observe(view.getLifeCycleOwner(), Observer {
-            val progressDialog = if (getProvider().hasMemberVar(hashCode(), name)) {
+            val progressDialog = if (view.hasMemberVar(name)) {
                 view.getMemberVar(name)
             } else {
                 val pd = ProgressDialog(view.getContext2())
@@ -32,7 +32,7 @@ fun MythViewModel.showLoading(show: Boolean) {
             if (it) {
                 progressDialog.show()
             } else {
-                progressDialog.cancel()
+                progressDialog.dismiss()
             }
         })
     }
