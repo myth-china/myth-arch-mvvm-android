@@ -8,7 +8,7 @@ ext {
     VERSION_NAME = "1.1.0-SNAPSHOT"
 }
 
-apply from: "${rootProject.projectDir}/scripts/publish.gradle"
+//apply from: "${rootProject.projectDir}/scripts/publish.gradle"
 
 android {
     compileSdkVersion 29

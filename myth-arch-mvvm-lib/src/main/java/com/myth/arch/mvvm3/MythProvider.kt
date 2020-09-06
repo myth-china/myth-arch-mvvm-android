@@ -1,8 +1,35 @@
 package com.myth.arch.mvvm3
 
+import com.myth.arch.log.MythLogger
+import java.lang.ref.PhantomReference
+import java.lang.ref.ReferenceQueue
+
 open class MythProvider {
 
     private val varMap = HashMap<Int, HashMap<String, Any>>()
+    private val objWeakRef = HashMap<Int, PhantomReference<Any>>()
+    private val objNameMap = HashMap<Int, String>()
+    private val referenceQueue = ReferenceQueue<Any>()
+
+    fun addObj(obj: Any) {
+        objWeakRef[obj.hashCode()] = PhantomReference(obj, referenceQueue)
+        objNameMap[obj.hashCode()] = obj::class.java.name
+    }
+
+    fun checkObjGC() {
+        objWeakRef.forEach {
+            MythLogger.d(
+                "MythProvider",
+                "Object ${objNameMap[it.key]} with hashcode(${it.key}) ${if (it.value.isEnqueued) "has been gc" else "is using"}"
+            )
+
+            if (it.value.isEnqueued) {
+                varMap.remove(it.key)
+                objWeakRef.remove(it.key)
+                objNameMap.remove(it.key)
+            }
+        }
+    }
 
     /**
      * Has root object in the map.
@@ -34,37 +61,5 @@ open class MythProvider {
     @Suppress("UNCHECKED_CAST")
     fun <T> getMemberVar(hashCode: Int, name: String): T {
         return varMap[hashCode]?.get(name) as T
-    }
-
-    private fun getCounter(hashCode: Int): Int {
-        return getMemberVar(hashCode, "counter") ?: 0
-    }
-
-    /**
-     * Reference counter +1.
-     *
-     * @return Is first time +1.
-     */
-    fun counterIncrease(hashCode: Int): Boolean {
-        var counter = getCounter(hashCode)
-        val flag = counter == 0
-        putMemberVar(hashCode, "counter", ++counter)
-        return flag
-    }
-
-    /**
-     * Reference counter -1，determine if we can release the object.
-     */
-    fun counterDecrease(hashCode: Int) {
-        if (!hasMemberVar(hashCode)) {
-            return
-        }
-
-        var counter = getCounter(hashCode)
-        counter -= 1
-
-        if (counter < 1) {
-            varMap.remove(hashCode)
-        }
     }
 }

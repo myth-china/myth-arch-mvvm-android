@@ -17,18 +17,18 @@ fun MythViewModel.useFragment(callback: (Fragment) -> Unit) {
      * 之后会通过MythViewModelProvider.addViewModelExt(name, toastData)，将此LiveData注册到MythViewModelProvider实例中，
      * 这样我们就可以通过此LiveData发送指令给View，实现我们的逻辑
      */
-    val toastData = getViewModelExtData(name) ?: MutableLiveData<(Fragment) -> Unit>()
+    val useData = getViewModelExtData(name) ?: MutableLiveData<(Fragment) -> Unit>()
 
-    toastData.value = callback
+    useData.value = callback
 
-    if (toastData.hasObservers()) {
+    if (useData.hasObservers()) {
         return
     }
 
     /**
      * 注册我们的LiveData和View建立关系
      */
-    addViewModelExt(name, toastData) { view, data ->
+    addViewModelExt(name, useData) { view, data ->
         data.observe(view.getLifeCycleOwner(), Observer {
             callback(view.getFragment2())
         })

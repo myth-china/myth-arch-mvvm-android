@@ -94,24 +94,13 @@ interface MythView {
 
             viewModel.onFired(viewModel.getData())
 
-            viewModel.config(this)
+            viewModel.config(this@MythView)
             viewModel.getConfigData().observe(
                 lifecycleOwner,
                 Observer {
-                    viewModel.config(this)
+                    viewModel.config(this@MythView)
                 }
             )
-
-            lifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
-
-                /**
-                 * 释放ViewModel中的Provider资源
-                 */
-                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                fun onDestroy() {
-                    viewModel.destroyProvider()
-                }
-            })
         } else {
             throw IllegalStateException("MythView only can use with MythViewModel")
         }

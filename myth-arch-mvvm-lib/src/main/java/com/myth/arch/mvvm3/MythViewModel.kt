@@ -4,18 +4,14 @@ import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.myth.arch.event.Event
-import java.lang.IllegalStateException
 
 object MythViewModelProvider : MythProvider() {
 
-    internal fun initMemberVar(hashCode: Int) {
+    internal fun initMemberVar(obj: MythViewModel) {
+        checkObjGC()
+        addObj(obj)
 
-        //非首次初始化，仅做计数器+1动作
-        if (!counterIncrease(hashCode)) {
-            return
-        }
-
-        putMemberVar(hashCode, "counter", 1)
+        val hashCode = obj.hashCode()
         putMemberVar(hashCode, "data", Bundle())
         putMemberVar(hashCode, "extMap", HashMap<LiveData<*>, MythViewModelExt<*>>())
         putMemberVar(hashCode, "dataMap", HashMap<String, LiveData<*>>())
@@ -66,11 +62,7 @@ interface MythViewModel {
     }
 
     fun initProvider() {
-        getProvider().initMemberVar(hashCode())
-    }
-
-    fun destroyProvider() {
-        getProvider().counterDecrease(hashCode())
+        getProvider().initMemberVar(this)
     }
 
     fun getData(): Bundle {
