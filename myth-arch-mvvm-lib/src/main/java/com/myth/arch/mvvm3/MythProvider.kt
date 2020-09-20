@@ -17,6 +17,8 @@ open class MythProvider {
     }
 
     fun checkObjGC() {
+        val removeKeys = ArrayList<Int>()
+
         objWeakRef.forEach {
             MythLogger.d(
                 "MythProvider",
@@ -24,10 +26,14 @@ open class MythProvider {
             )
 
             if (it.value.isEnqueued) {
-                varMap.remove(it.key)
-                objWeakRef.remove(it.key)
-                objNameMap.remove(it.key)
+                removeKeys.add(it.key)
             }
+        }
+
+        removeKeys.forEach {
+            varMap.remove(it)
+            objWeakRef.remove(it)
+            objNameMap.remove(it)
         }
     }
 
