@@ -2,7 +2,8 @@ package com.myth.arch.mvvm3.vmext
 
 import android.app.ProgressDialog
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
+import com.myth.arch.event.Event
+import com.myth.arch.event.EventObserver
 import com.myth.arch.mvvm3.MythViewModel
 
 /**
@@ -11,16 +12,16 @@ import com.myth.arch.mvvm3.MythViewModel
 fun MythViewModel.showLoading(show: Boolean) {
     val name = "loading"
 
-    val loadingData = getViewModelExtData(name) ?: MutableLiveData<Boolean>()
+    val loadingData = getViewModelExtData(name) ?: MutableLiveData<Event<Boolean>>()
 
-    loadingData.postValue(show)
+    loadingData.postValue(Event(show))
 
     if (loadingData.hasObservers()) {
         return
     }
 
     addViewModelExt(name, loadingData) { view, data ->
-        data.observe(view.getLifeCycleOwner(), Observer {
+        data.observe(view.getLifeCycleOwner(), EventObserver {
             val progressDialog = if (view.hasMemberVar(name)) {
                 view.getMemberVar(name)
             } else {

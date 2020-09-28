@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.myth.arch.event.*
 import com.myth.arch.exception.MythIllegalStateException
 import com.myth.arch.mvvm3.MythViewModel
 
@@ -17,22 +18,19 @@ fun MythViewModel.startActivity(cls: Class<out AppCompatActivity>, args: Bundle?
     val name = "navigator"
 
     val liveData =
-        getViewModelExtData(name) ?: MutableLiveData<Class<out AppCompatActivity>>()
+        getViewModelExtData(name)
+            ?: MutableLiveData<Event2<Class<out AppCompatActivity>, Bundle?>>()
 
-    liveData.postValue(cls)
+    liveData.postValue(Event2(cls, args))
 
     if (liveData.hasObservers()) {
         return
     }
 
     addViewModelExt(name, liveData) { view, data ->
-        data.observe(view.getLifeCycleOwner(), Observer {
-            val context = view.getContext2() ?: return@Observer
-            context.startActivity(Intent(context, it).apply {
-                if (args != null) {
-                    putExtras(args)
-                }
-            })
+        data.observe(view.getLifeCycleOwner(), EventObserver2 { pCls, pArgs ->
+            val context = view.getContext2() ?: return@EventObserver2
+            context.startActivity(Intent(context, pCls).apply { pArgs?.let { putExtras(it) } })
         })
     }
 }
@@ -45,30 +43,33 @@ fun MythViewModel.startActivityForResult(
     val name = "navigatorForResult"
 
     val liveData =
-        getViewModelExtData(name) ?: MutableLiveData<Class<out AppCompatActivity>>()
+        getViewModelExtData(name)
+            ?: MutableLiveData<Event3<Class<out AppCompatActivity>, Bundle?, Int>>()
 
-    liveData.postValue(cls)
+    liveData.postValue(Event3(cls, args, requestCode))
 
     if (liveData.hasObservers()) {
         return
     }
 
     addViewModelExt(name, liveData) { view, data ->
-        data.observe(view.getLifeCycleOwner(), Observer {
+        data.observe(view.getLifeCycleOwner(), EventObserver3 { pCls, pArgs, pCode ->
             when (view) {
                 is FragmentActivity -> {
-                    view.startActivityForResult(Intent(view, it).apply {
-                        if (args != null) {
-                            putExtras(args)
-                        }
-                    }, requestCode)
+                    view.startActivityForResult(
+                        Intent(
+                            view,
+                            pCls
+                        ).apply { pArgs?.let { putExtras(it) } }, pCode
+                    )
                 }
                 is Fragment -> {
-                    view.startActivityForResult(Intent(view.context, it).apply {
-                        if (args != null) {
-                            putExtras(args)
-                        }
-                    }, requestCode)
+                    view.startActivityForResult(
+                        Intent(
+                            view.context,
+                            pCls
+                        ).apply { pArgs?.let { putExtras(it) } }, pCode
+                    )
                 }
                 else -> {
                     throw MythIllegalStateException("Can't startActivityForResult, the view is not a FragmentActivity or Fragment!")
@@ -81,14 +82,16 @@ fun MythViewModel.startActivityForResult(
 fun MythViewModel.finish() {
     val name = "finish"
 
-    val liveData = getViewModelExtData(name) ?: MutableLiveData<Boolean>()
+    val liveData = getViewModelExtData(name) ?: MutableLiveData<Event<Boolean>>()
+
+    liveData.postValue(Event(true))
 
     if (liveData.hasObservers()) {
         return
     }
 
     addViewModelExt(name, liveData) { view, data ->
-        data.observe(view.getLifeCycleOwner(), Observer {
+        data.observe(view.getLifeCycleOwner(), EventObserver {
             when (view) {
                 is FragmentActivity -> {
                     view.finish()
@@ -107,14 +110,16 @@ fun MythViewModel.finish() {
 fun MythViewModel.popBackStack() {
     val name = "popBackStack"
 
-    val liveData = getViewModelExtData(name) ?: MutableLiveData<Boolean>()
+    val liveData = getViewModelExtData(name) ?: MutableLiveData<Event<Boolean>>()
+
+    liveData.postValue(Event(true))
 
     if (liveData.hasObservers()) {
         return
     }
 
     addViewModelExt(name, liveData) { view, data ->
-        data.observe(view.getLifeCycleOwner(), Observer {
+        data.observe(view.getLifeCycleOwner(), EventObserver {
             when (view) {
                 is FragmentActivity -> {
                     view.supportFragmentManager.popBackStack()

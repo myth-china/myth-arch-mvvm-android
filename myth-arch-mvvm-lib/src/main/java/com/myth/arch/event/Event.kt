@@ -45,7 +45,7 @@ open class Event<out T>(private val content: T) {
     fun peekContent(): T = content
 }
 
-open class Event2<out T, P>(private val content: T?, private val content2: P?) {
+open class Event2<out T, P>(private val content: T, private val content2: P) {
 
     @Suppress("MemberVisibilityCanBePrivate")
     var hasBeenHandled = false
@@ -71,13 +71,17 @@ open class Event2<out T, P>(private val content: T?, private val content2: P?) {
         }
     }
 
-    fun peekContent(): T? = content
+    fun peekContent(): T = content
 
-    fun peekContent2(): P? = content2
+    fun peekContent2(): P = content2
 }
 
 
-open class Event3<out T, P, O>(private val content: T?, private val content2: P?, private val content3: O?) {
+open class Event3<out T, P, O>(
+    private val content: T,
+    private val content2: P,
+    private val content3: O
+) {
 
     @Suppress("MemberVisibilityCanBePrivate")
     var hasBeenHandled = false
@@ -114,9 +118,9 @@ open class Event3<out T, P, O>(private val content: T?, private val content2: P?
         }
     }
 
-    fun peekContent(): T? = content
-    fun peekContent2(): P? = content2
-    fun peekContent3(): O? = content3
+    fun peekContent(): T = content
+    fun peekContent2(): P = content2
+    fun peekContent3(): O = content3
 }
 
 /**
@@ -125,27 +129,30 @@ open class Event3<out T, P, O>(private val content: T?, private val content2: P?
  *
  * [onEventUnhandledContent] is *only* called if the [Event]'s contents has not been handled.
  */
-class EventObserver<T>(private val onEventUnhandledContent: (T) -> Unit) : Observer<Event<T>?> {
-    override fun onChanged(event: Event<T>?) {
-        event?.getContentIfNotHandled()?.let {
+open class EventObserver<T>(private val onEventUnhandledContent: (T) -> Unit) :
+    Observer<Event<T>> {
+    override fun onChanged(event: Event<T>) {
+        event.getContentIfNotHandled()?.let {
             onEventUnhandledContent(it)
         }
     }
 }
 
-class EventObserver2<T, P>(private val onEventUnhandledContent: (T?, P?) -> Unit) : Observer<Event2<T?, P?>?> {
-    override fun onChanged(event: Event2<T?, P?>?) {
-        val content = event?.getContentIfNotHandled()
-        val content2 = event?.getContent2IfNotHandled()
+open class EventObserver2<T, P>(private val onEventUnhandledContent: (T, P) -> Unit) :
+    Observer<Event2<T, P>> {
+    override fun onChanged(event: Event2<T, P>) {
+        val content = event.getContentIfNotHandled() ?: return
+        val content2 = event.getContent2IfNotHandled() ?: return
         onEventUnhandledContent(content, content2)
     }
 }
 
-class EventObserver3<T, P, O>(private val onEventUnhandledContent: (T?, P?, O?) -> Unit) : Observer<Event3<T?, P?, O?>?> {
-    override fun onChanged(event: Event3<T?, P?, O?>?) {
-        val content = event?.getContentIfNotHandled()
-        val content2 = event?.getContent2IfNotHandled()
-        val content3 = event?.getContent3IfNotHandled()
+class EventObserver3<T, P, O>(private val onEventUnhandledContent: (T, P, O) -> Unit) :
+    Observer<Event3<T, P, O>> {
+    override fun onChanged(event: Event3<T, P, O>) {
+        val content = event.getContentIfNotHandled() ?: return
+        val content2 = event.getContent2IfNotHandled() ?: return
+        val content3 = event.getContent3IfNotHandled() ?: return
         onEventUnhandledContent(content, content2, content3)
     }
 }

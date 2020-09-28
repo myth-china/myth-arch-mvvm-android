@@ -3,7 +3,8 @@ package com.myth.arch.mvvm3.vmext
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
+import com.myth.arch.event.Event
+import com.myth.arch.event.EventObserver
 import com.myth.arch.mvvm3.MythViewModel
 
 /**
@@ -17,44 +18,47 @@ fun MythViewModel.useFragment(callback: (Fragment) -> Unit) {
      * 之后会通过MythViewModelProvider.addViewModelExt(name, toastData)，将此LiveData注册到MythViewModelProvider实例中，
      * 这样我们就可以通过此LiveData发送指令给View，实现我们的逻辑
      */
-    val useData = getViewModelExtData(name) ?: MutableLiveData<(Fragment) -> Unit>()
+    val liveData = getViewModelExtData(name) ?: MutableLiveData<Event<(Fragment) -> Unit>>()
 
-    useData.value = callback
+    liveData.value = Event(callback)
 
-    if (useData.hasObservers()) {
+    if(liveData.hasObservers()){
         return
     }
 
     /**
      * 注册我们的LiveData和View建立关系
      */
-    addViewModelExt(name, useData) { view, data ->
-        data.observe(view.getLifeCycleOwner(), Observer {
-            callback(view.getFragment2())
+    addViewModelExt(name, liveData) { view, data ->
+        data.observe(view.getLifeCycleOwner(), EventObserver {
+            if (view is Fragment) {
+                it(view)
+            }
         })
     }
 }
 
+
 fun MythViewModel.useActivity(callback: (AppCompatActivity) -> Unit) {
     val name = "useActivity"
 
-    val toastData =
-        getViewModelExtData(name) ?: MutableLiveData<(AppCompatActivity) -> Unit>()
+    val liveData =
+        getViewModelExtData(name) ?: MutableLiveData<Event<(AppCompatActivity) -> Unit>>()
 
-    toastData.value = callback
+    liveData.value = Event(callback)
 
-    if (toastData.hasObservers()) {
+    if(liveData.hasObservers()){
         return
     }
 
-    addViewModelExt(name, toastData) { view, data ->
-        data.observe(view.getLifeCycleOwner(), Observer {
+    addViewModelExt(name, liveData) { view, data ->
+        data.observe(view.getLifeCycleOwner(), EventObserver {
             //如果ViewModel绑定的是Fragment，那么不回调Activity代码块
             if (view is Fragment) {
-                return@Observer
+                return@EventObserver
             }
             view.getActivity2()?.let {
-                callback(it as AppCompatActivity)
+                it(it as AppCompatActivity)
             }
         })
     }

@@ -111,7 +111,16 @@ interface MythViewModel {
     @Suppress("UNCHECKED_CAST")
     fun <T> getViewModelExtData(name: String): MutableLiveData<T>? {
         val dataMap = MythViewModelProvider.getDataMap(hashCode())
-
         return dataMap[name] as? MutableLiveData<T>?
+    }
+
+    fun isViewModelExtAdded(name: String, view: MythView): Boolean {
+        if (getMemberVar(name + view.hashCode())) {
+            return true
+        }
+
+        putMemberVar(name + view.hashCode(), true)
+
+        return false
     }
 }
