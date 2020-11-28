@@ -8,6 +8,10 @@ import com.myth.arch.mvvm3.vmext.*
 
 class MainViewModel : ViewModel(), MythViewModel {
 
+    override fun onFired(data: Bundle) {
+
+    }
+
     /**
      * 在ViewModel中使用实Fragment实例
      */
