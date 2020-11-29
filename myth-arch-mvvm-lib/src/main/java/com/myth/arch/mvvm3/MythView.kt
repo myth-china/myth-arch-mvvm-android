@@ -8,12 +8,18 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.myth.arch.exception.MythIllegalAccessException
 import com.myth.arch.exception.MythIllegalArgumentException
 
 /**
- * 所有Activity及Fragment的父类
+ * Parent of Activity/Fragment.
  */
 interface MythView {
+
+    /**
+     * Default provider for this.
+     */
+    fun getProvider(): MythViewProvider
 
     @Suppress("UNCHECKED_CAST")
     fun <T : ViewModel> viewModelOf(cls: Class<T>): T {
@@ -30,18 +36,12 @@ interface MythView {
         }
     }
 
-    /**
-     * 用于共享ViewModel实例的情况
-     */
     fun <T : ViewModel> viewModelOf(fragment: Fragment, cls: Class<T>): T {
         val viewModel = ViewModelProvider(fragment).get(cls)
         fire(viewModel)
         return viewModel
     }
 
-    /**
-     * 用于共享ViewModel实例的情况
-     */
     fun <T : ViewModel> viewModelOf(activity: AppCompatActivity, cls: Class<T>): T {
         val viewModel = ViewModelProvider(activity).get(cls)
         fire(viewModel)
@@ -70,11 +70,11 @@ interface MythView {
                 throw subClassErrorException()
             }
 
-            viewModel.getProvider().config(this)
-            viewModel.getProvider().configData.observe(
+            viewModel.getProvider().installAllExt(this)
+            viewModel.getProvider().installData.observe(
                 lifecycleOwner,
                 Observer {
-                    viewModel.getProvider().config(this)
+                    viewModel.getProvider().installAllExt(this)
                 }
             )
             lifecycleOwner.lifecycle.addObserver(viewModel.getProvider().coroutineMain)
@@ -86,14 +86,14 @@ interface MythView {
     fun getLifeCycleOwner(): LifecycleOwner {
         return when (this) {
             is AppCompatActivity -> this
-            is Fragment -> this.getLifeCycleOwner()
+            is Fragment -> this
             else -> throw subClassErrorException()
         }
     }
 
     fun getContext2(): Context? {
         return when (this) {
-            is FragmentActivity -> this
+            is AppCompatActivity -> this
             is Fragment -> this.context
             else -> throw subClassErrorException()
         }
@@ -110,7 +110,7 @@ interface MythView {
     fun getFragment2(): Fragment {
         return when (this) {
             is Fragment -> this
-            else -> throw java.lang.IllegalStateException("Root view is not a fragment!")
+            else -> throw MythIllegalAccessException("Root view is not a fragment!")
         }
     }
 

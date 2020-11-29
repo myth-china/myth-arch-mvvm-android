@@ -11,48 +11,64 @@ import kotlinx.coroutines.launch
 
 class MythViewModelProvider(private val viewModel: MythViewModel) {
 
-    private val extMap = HashMap<LiveData<*>, MythViewModelExt<*>>()
+    private val extMap = HashMap<String, MythViewModelExt<*>>()
     private val dataMap = HashMap<String, LiveData<*>>()
-    val configData = MutableLiveData<Event<Boolean>>()
+    val installData = MutableLiveData<Event<Boolean>>()
     val data by lazy { Bundle() }
 
     val coroutineMain by lazy { CoroutineMain() }
 
-    fun config(view: MythView) {
-        viewModel.internalConfig(view)
+    fun installAllExt(view: MythView) {
         extMap.keys.forEach {
-            if (it.hasObservers()) {
+            val data = dataMap[it] ?: return@forEach
+            if (data.hasObservers()) {
                 return@forEach
             }
-            val data = extMap[it]
-            if (data != null) {
-                extMap[it]?.invoke(view, it)
-            }
+            extMap[it]?.invoke(view, data)
         }
     }
 
-    private fun configAgain() {
-        configData.postValue(Event(true))
+    private fun reInstallAllExt() {
+        installData.postValue(Event(true))
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T> addViewModelExt(name: String, data: LiveData<T>, observe: MythViewModelExt<T>) {
-        extMap[data] = observe as MythViewModelExt<*>
+    fun <T> installExt(name: String, data: LiveData<T>, observe: MythViewModelExt<T>) {
+        if (data.hasObservers()) {
+            return
+        }
+
+        extMap[name] = observe as MythViewModelExt<*>
         dataMap[name] = data
-        configAgain()
+        reInstallAllExt()
+    }
+
+    fun hasInstallExt(name: String): Boolean {
+        return dataMap.containsKey(name)
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T> getViewModelExtData(name: String): MutableLiveData<T>? {
+    fun <T> getExtData(name: String): MutableLiveData<T>? {
         return dataMap[name] as? MutableLiveData<T>?
     }
 
+    @Deprecated(
+        "Recommend use suspend function in ViewModel, then call witch lifecycleScope",
+        ReplaceWith("lifecycleScope.launch {  }", "androidx.lifecycle.lifecycleScope")
+    )
     inline fun launch(crossinline func: suspend CoroutineScope.() -> Unit) {
         coroutineMain.launch {
             func()
         }
     }
 
+    @Deprecated(
+        "Recommend use GlobalScope directly", ReplaceWith(
+            "GlobalScope.launch { func(this) }",
+            "kotlinx.coroutines.GlobalScope",
+            "kotlinx.coroutines.launch"
+        )
+    )
     inline fun launchBackground(crossinline func: suspend CoroutineScope.() -> Unit) {
         GlobalScope.launch {
             func(this)

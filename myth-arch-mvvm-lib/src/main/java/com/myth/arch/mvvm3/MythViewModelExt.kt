@@ -10,32 +10,40 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.myth.arch.exception.MythIllegalStateException
 
+fun <T> MythViewModel.easyUseExt(
+    name: String,
+    data: T,
+    post: Boolean = true,
+    action: (MythView, T) -> Unit
+) {
+    var liveData = getProvider().getExtData<T>(name)
+
+    if (liveData == null) {
+        liveData = MutableLiveData<T>()
+        getProvider().installExt(name, liveData) { view, internalLiveData ->
+            internalLiveData.observe(view.getLifeCycleOwner(), Observer {
+                action(view, it)
+            })
+        }
+    } else {
+        if (post) {
+            liveData.postValue(data)
+        } else {
+            liveData.value = data
+        }
+    }
+}
+
 /**
  * Use Block
  */
 fun MythViewModel.useFragment(callback: (Fragment) -> Unit) {
     val name = "useFragment"
 
-    /**
-     * 从MythViewModel的MythViewModelProvider实例中获取我们的LiveData，如果此LiveData不存在，则new一个，
-     * 之后会通过MythViewModelProvider.addViewModelExt(name, toastData)，将此LiveData注册到MythViewModelProvider实例中，
-     * 这样我们就可以通过此LiveData发送指令给View，实现我们的逻辑
-     */
-    val toastData = getProvider().getViewModelExtData(name) ?: MutableLiveData<(Fragment) -> Unit>()
-
-    toastData.value = callback
-
-    if (toastData.hasObservers()) {
-        return
-    }
-
-    /**
-     * 注册我们的LiveData和View建立关系
-     */
-    getProvider().addViewModelExt(name, toastData) { view, data ->
-        data.observe(view.getLifeCycleOwner(), Observer {
-            callback(view.getFragment2())
-        })
+    easyUseExt(name, callback, false) { view, data ->
+        if (view is Fragment) {
+            data.invoke(view)
+        }
     }
 }
 
@@ -43,15 +51,11 @@ fun MythViewModel.useActivity(callback: (AppCompatActivity) -> Unit) {
     val name = "useActivity"
 
     val toastData =
-        getProvider().getViewModelExtData(name) ?: MutableLiveData<(AppCompatActivity) -> Unit>()
+        getProvider().getExtData(name) ?: MutableLiveData<(AppCompatActivity) -> Unit>()
 
     toastData.value = callback
 
-    if (toastData.hasObservers()) {
-        return
-    }
-
-    getProvider().addViewModelExt(name, toastData) { view, data ->
+    getProvider().installExt(name, toastData) { view, data ->
         data.observe(view.getLifeCycleOwner(), Observer {
             //如果ViewModel绑定的是Fragment，那么不回调Activity代码块
             if (view is Fragment) {
@@ -70,7 +74,7 @@ fun MythViewModel.useActivity(callback: (AppCompatActivity) -> Unit) {
 fun MythViewModel.toast(text: String) {
     val name = "toast"
 
-    val toastData = getProvider().getViewModelExtData(name) ?: MutableLiveData<String>()
+    val toastData = getProvider().getExtData(name) ?: MutableLiveData<String>()
 
     toastData.postValue(text)
 
@@ -78,7 +82,7 @@ fun MythViewModel.toast(text: String) {
         return
     }
 
-    getProvider().addViewModelExt(name, toastData) { view, data ->
+    getProvider().installExt(name, toastData) { view, data ->
         data.observe(view.getLifeCycleOwner(), Observer {
             val context = view.getContext2() ?: return@Observer
             Toast.makeText(context, it, Toast.LENGTH_LONG).show()
@@ -93,7 +97,7 @@ fun MythViewModel.startActivity(cls: Class<out AppCompatActivity>, args: Bundle?
     val name = "navigator"
 
     val liveData =
-        getProvider().getViewModelExtData(name) ?: MutableLiveData<Class<out AppCompatActivity>>()
+        getProvider().getExtData(name) ?: MutableLiveData<Class<out AppCompatActivity>>()
 
     liveData.postValue(cls)
 
@@ -101,7 +105,7 @@ fun MythViewModel.startActivity(cls: Class<out AppCompatActivity>, args: Bundle?
         return
     }
 
-    getProvider().addViewModelExt(name, liveData) { view, data ->
+    getProvider().installExt(name, liveData) { view, data ->
         data.observe(view.getLifeCycleOwner(), Observer {
             val context = view.getContext2() ?: return@Observer
             context.startActivity(Intent(context, it).apply {
@@ -121,7 +125,7 @@ fun MythViewModel.startActivityForResult(
     val name = "navigatorForResult"
 
     val liveData =
-        getProvider().getViewModelExtData(name) ?: MutableLiveData<Class<out AppCompatActivity>>()
+        getProvider().getExtData(name) ?: MutableLiveData<Class<out AppCompatActivity>>()
 
     liveData.postValue(cls)
 
@@ -129,7 +133,7 @@ fun MythViewModel.startActivityForResult(
         return
     }
 
-    getProvider().addViewModelExt(name, liveData) { view, data ->
+    getProvider().installExt(name, liveData) { view, data ->
         data.observe(view.getLifeCycleOwner(), Observer {
             when (view) {
                 is FragmentActivity -> {
@@ -157,13 +161,13 @@ fun MythViewModel.startActivityForResult(
 fun MythViewModel.finish() {
     val name = "finish"
 
-    val liveData = getProvider().getViewModelExtData(name) ?: MutableLiveData<Boolean>()
+    val liveData = getProvider().getExtData(name) ?: MutableLiveData<Boolean>()
 
     if (liveData.hasObservers()) {
         return
     }
 
-    getProvider().addViewModelExt(name, liveData) { view, data ->
+    getProvider().installExt(name, liveData) { view, data ->
         data.observe(view.getLifeCycleOwner(), Observer {
             when (view) {
                 is FragmentActivity -> {
@@ -184,13 +188,13 @@ fun MythViewModel.finish() {
 fun MythViewModel.popBackStack() {
     val name = "popBackStack"
 
-    val liveData = getProvider().getViewModelExtData(name) ?: MutableLiveData<Boolean>()
+    val liveData = getProvider().getExtData(name) ?: MutableLiveData<Boolean>()
 
     if (liveData.hasObservers()) {
         return
     }
 
-    getProvider().addViewModelExt(name, liveData) { view, data ->
+    getProvider().installExt(name, liveData) { view, data ->
         data.observe(view.getLifeCycleOwner(), Observer {
             when (view) {
                 is FragmentActivity -> {
