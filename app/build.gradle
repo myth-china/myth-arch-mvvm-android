@@ -40,6 +40,6 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation "androidx.recyclerview:recyclerview:1.1.0"
 
-    implementation 'com.github.myth-china:myth-arch-mvvm-lib:1.0.0'
-    //implementation project(path: ':myth-arch-mvvm-lib')
+    //implementation 'com.github.myth-china:myth-arch-mvvm-lib:1.0.0'
+    implementation project(path: ':myth-arch-mvvm-lib')
 }

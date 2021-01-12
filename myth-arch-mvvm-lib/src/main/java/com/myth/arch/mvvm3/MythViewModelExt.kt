@@ -20,10 +20,17 @@ fun <T> MythViewModel.easyUseExt(
 
     if (liveData == null) {
         liveData = MutableLiveData<T>()
+
         getProvider().installExt(name, liveData) { view, internalLiveData ->
             internalLiveData.observe(view.getLifeCycleOwner(), Observer {
                 action(view, it)
             })
+        }
+
+        if (post) {
+            liveData.postValue(data)
+        } else {
+            liveData.value = data
         }
     } else {
         if (post) {
@@ -73,20 +80,9 @@ fun MythViewModel.useActivity(callback: (AppCompatActivity) -> Unit) {
  */
 fun MythViewModel.toast(text: String) {
     val name = "toast"
-
-    val toastData = getProvider().getExtData(name) ?: MutableLiveData<String>()
-
-    toastData.postValue(text)
-
-    if (toastData.hasObservers()) {
-        return
-    }
-
-    getProvider().installExt(name, toastData) { view, data ->
-        data.observe(view.getLifeCycleOwner(), Observer {
-            val context = view.getContext2() ?: return@Observer
-            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
-        })
+    easyUseExt(name, text, true) { view, innerText ->
+        val context = view.getContext2() ?: return@easyUseExt
+        Toast.makeText(context, innerText, Toast.LENGTH_LONG).show()
     }
 }
 
