@@ -77,9 +77,8 @@ interface MythView {
                     viewModel.getProvider().installAllExt(this)
                 }
             )
-            lifecycleOwner.lifecycle.addObserver(viewModel.getProvider().coroutineMain)
         } else {
-            throw IllegalStateException("MythView only can use with MythViewModel")
+            throw MythIllegalAccessException("MythView only can use with MythViewModel")
         }
     }
 
