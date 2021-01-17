@@ -4,22 +4,32 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
+import com.myth.arch.event.EventObserver
 import com.myth.arch.exception.MythIllegalAccessException
 import com.myth.arch.exception.MythIllegalArgumentException
+import com.myth.arch.logger.MythLogger
+
+
+object MythViewProviderFactory : MythCommonProviderMaker<MythView, MythViewProvider>() {
+
+    override fun instance(): MythViewProvider {
+        return MythViewProvider()
+    }
+}
 
 /**
  * Parent of Activity/Fragment.
  */
 interface MythView {
 
+    val tag: String
+        get() = "MythView"
+
     /**
      * Default provider for this.
      */
-    fun getProvider(): MythViewProvider
+    fun getProvider() = MythViewProviderFactory.getProvider(this)
 
     @Suppress("UNCHECKED_CAST")
     fun <T : ViewModel> viewModelOf(cls: Class<T>): T {
@@ -70,12 +80,28 @@ interface MythView {
                 throw subClassErrorException()
             }
 
+            lifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
+                /**
+                 * Remove [MythViewProvider].
+                 */
+                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+                fun onDestroyView() {
+                    MythLogger.d(tag, "${this@MythView.javaClass.canonicalName}.onDestroyView() remove provider.")
+                    MythViewProviderFactory.removeProvider(this@MythView)
+                }
+            })
+
+            /**
+             * [MythViewModel] setup.
+             */
+            viewModel.setupProvider()
+            viewModel.internalConfig(this)
             viewModel.getProvider().installAllExt(this)
             viewModel.getProvider().installData.observe(
-                lifecycleOwner,
-                Observer {
-                    viewModel.getProvider().installAllExt(this)
-                }
+                    lifecycleOwner,
+                    EventObserver {
+                        viewModel.getProvider().installAllExt(this)
+                    }
             )
         } else {
             throw MythIllegalAccessException("MythView only can use with MythViewModel")
@@ -115,5 +141,9 @@ interface MythView {
 
     fun subClassErrorException(): MythIllegalArgumentException {
         return MythIllegalArgumentException("The class must extend AppCompatActivity or Fragment!")
+    }
+
+    fun viewModelErrorException(): MythIllegalAccessException {
+        return MythIllegalAccessException("ViewModel must implement MythViewModel!")
     }
 }

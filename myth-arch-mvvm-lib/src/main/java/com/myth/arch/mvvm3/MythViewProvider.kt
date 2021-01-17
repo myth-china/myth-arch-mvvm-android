@@ -1,6 +1,8 @@
 package com.myth.arch.mvvm3
 
-class MythViewProvider {
+import java.io.Closeable
+
+class MythViewProvider : Closeable {
 
     private val varMap = HashMap<String, Any>()
 
@@ -15,5 +17,9 @@ class MythViewProvider {
     @Suppress("UNCHECKED_CAST")
     fun <T> getVar(name: String): T? {
         return varMap[name] as T?
+    }
+
+    override fun close() {
+        varMap.clear()
     }
 }
