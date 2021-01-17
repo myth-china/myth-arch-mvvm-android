@@ -4,22 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#00ff00"
     tools:context=".SecondActivity">
 
     <TextView
         android:id="@+id/tv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="Second Activity"
-        android:textSize="58sp" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/data_from_parent"
+        app:layout_constraintBottom_toTopOf="@+id/b_finish"
+        app:layout_constraintEnd_toEndOf="@+id/b_finish"
+        app:layout_constraintStart_toStartOf="@+id/b_finish"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/b_finish"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="finish"
+        android:text="@string/finish"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
