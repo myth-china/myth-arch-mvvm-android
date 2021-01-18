@@ -86,7 +86,10 @@ interface MythView {
                  */
                 @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
                 fun onDestroyView() {
-                    MythLogger.d(tag, "${this@MythView.javaClass.canonicalName}.onDestroyView() remove provider.")
+                    MythLogger.d(
+                        tag,
+                        "${this@MythView.javaClass.canonicalName}.onDestroyView() remove provider."
+                    )
                     MythViewProviderFactory.removeProvider(this@MythView)
                 }
             })
@@ -98,10 +101,11 @@ interface MythView {
             viewModel.internalConfig(this)
             viewModel.getProvider().installAllExt(this)
             viewModel.getProvider().installData.observe(
-                    lifecycleOwner,
-                    EventObserver {
-                        viewModel.getProvider().installAllExt(this)
-                    }
+                lifecycleOwner,
+                EventObserver {
+                    MythLogger.d(tag, "installData")
+                    viewModel.getProvider().installAllExt(this)
+                }
             )
         } else {
             throw MythIllegalAccessException("MythView only can use with MythViewModel")

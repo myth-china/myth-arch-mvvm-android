@@ -20,7 +20,11 @@ interface MythViewModel : Closeable {
     val tag: String
         get() = "MythViewModel"
 
-    fun getProvider() = MythViewModelProviderFactory.getProvider(this)
+    fun getProvider(): MythViewModelProvider {
+        val provider = MythViewModelProviderFactory.getProvider(this)
+        MythLogger.d(tag, "getProvider ${provider.hashCode()}")
+        return provider
+    }
 
     fun setupProvider() {
         if (this is ViewModel) {

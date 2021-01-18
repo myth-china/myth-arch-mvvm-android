@@ -52,7 +52,7 @@ class EventObserver<T>(private val onEventUnhandledContent: (T?) -> Unit) : Obse
     override fun onChanged(event: Event<T>?) {
         event ?: return
 
-        if (event.hasHandled()) {
+        if (!event.hasHandled()) {
             onEventUnhandledContent(event.peekContent())
         }
     }
