@@ -1,9 +1,12 @@
 package com.myth.arch.mvvm3
 
 import androidx.core.util.Pools
+import com.myth.arch.logger.MythLogger
 import java.io.Closeable
 
 abstract class MythCommonProviderMaker<K, T> {
+
+    private val tag = "MythCommonProviderMaker"
 
     private val providerMap = LinkedHashMap<K, T>()
     private val pool = Pools.SynchronizedPool<T>(10)
@@ -22,7 +25,11 @@ abstract class MythCommonProviderMaker<K, T> {
         if (provider is Closeable) {
             provider.close()
         }
-        provider?.let { pool.release(it) }
+        provider?.let {
+            if (!pool.release(it)) {
+                MythLogger.d(tag, "Pool is full!")
+            }
+        }
     }
 
     abstract fun instance(): T

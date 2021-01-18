@@ -34,6 +34,8 @@ interface MythViewModel : Closeable {
             val method = ViewModel::class.java.getDeclaredMethod("setTagIfAbsent", String::class.java, Object::class.java)
             method.isAccessible = true
             method.invoke(this, this.javaClass.canonicalName, this)
+
+            MythLogger.d(tag, "${this.javaClass.simpleName}.setupProvider()")
         }
     }
 
@@ -63,7 +65,7 @@ interface MythViewModel : Closeable {
 
             MythLogger.d(tag, "easyUseExt $name|${data.toString()}|${action}")
 
-            liveData = MutableLiveData<Event<T>>()
+            liveData = MutableLiveData()
 
             getProvider().installExt(name, liveData) { view, internalLiveData ->
                 internalLiveData.observe(view.getLifeCycleOwner(), EventObserver {
@@ -80,9 +82,10 @@ interface MythViewModel : Closeable {
     }
 
     /**
-     * Remove provider from single instance factory map with [ViewModel.mBagOfTags] & [ViewModel.clear].
+     * Remove provider from [MythViewModelProviderFactory] by [ViewModel.mBagOfTags] & [ViewModel.clear].
      */
     override fun close() {
+        MythLogger.d(tag, "${this.javaClass.simpleName}.close()")
         MythViewModelProviderFactory.removeProvider(this)
     }
 }
